@@ -1,0 +1,6 @@
+<ops>
+    <op name="sum"><lhs>3</lhs><rhs>6</rhs></op>
+    <op name="mul"><lhs>3</lhs><rhs>3</rhs></op>
+    <op name="sub"><lhs>10</lhs><rhs>1</rhs></op>
+    <op name="div"><lhs>18</lhs><rhs>2</rhs></op>
+</ops>

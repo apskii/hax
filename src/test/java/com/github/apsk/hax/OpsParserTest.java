@@ -1,16 +1,15 @@
 package com.github.apsk.hax;
 
-import com.github.apsk.hax.Parser;
-import static junit.framework.Assert.*;
 import org.junit.Test;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-
 import java.util.List;
+import java.util.function.Function;
 
 import static com.github.apsk.hax.HAX.*;
+import static junit.framework.Assert.assertEquals;
 
 public class OpsParserTest {
     public static class Op {
@@ -25,31 +24,24 @@ public class OpsParserTest {
     }
     @Test
     public void checkOps() throws XMLStreamException {
+        Function<String,String> capitalize = s ->
+            Character.toUpperCase(s.charAt(0)) + s.substring(1);
         Parser<Op> op = open("op")
             .nextR(attr("name"))
-            .and(open("lhs").nextR(text()))
-            .and(open("rhs").nextR(text()))
-            .map(t -> {
-                Op.Type type = null;
-                switch (t.val1) {
-                    case "sum": type = Op.Type.Sum; break;
-                    case "sub": type = Op.Type.Sub; break;
-                    case "mul": type = Op.Type.Mul; break;
-                    case "div": type = Op.Type.Div; break;
-                }
-                return new Op(type,
-                    Integer.parseInt(t.val2),
-                    Integer.parseInt(t.val3)
-                );
-            });
+            .and(elemText("lhs"))
+            .and(elemText("rhs"))
+            .nextL(close("op"))
+            .map(r -> new Op(
+                Op.Type.valueOf(capitalize.apply(r.val1)),
+                Integer.parseInt(r.val2),
+                Integer.parseInt(r.val3)
+            ));
         XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(
-                getClass().getClassLoader().getResourceAsStream("ops.xml")
+            Entry.class.getClassLoader().getResourceAsStream("ops.xml")
         );
-        List<Op> ops = open("ops")
-            .nextR(op.until(closing("ops")))
-            .run(reader);
+        List<Op> ops = manyWithin("ops", op).run(reader);
         Op opA = ops.get(0);
-        assertEquals("ASDASD", opA.type, Op.Type.Sum);
+        assertEquals(opA.type, Op.Type.Sum);
         assertEquals(opA.lhs, 3);
         assertEquals(opA.rhs, 6);
         Op opB = ops.get(1);
