@@ -37,7 +37,7 @@ public class OpsParserTest {
                 Integer.parseInt(r.val3)
             ));
         XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(
-            Entry.class.getClassLoader().getResourceAsStream("ops.xml")
+            getClass().getClassLoader().getResourceAsStream("ops.xml")
         );
         List<Op> ops = manyWithin("ops", op).run(reader);
         Op opA = ops.get(0);
