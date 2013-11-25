@@ -213,6 +213,14 @@ public class HAX {
         return openQ(qname).nextR(text());
     }
 
+    public static Parser1<String> elemAttr(String elemName, String attrName) {
+        return open(elemName).nextR(attr(attrName));
+    }
+
+    public static Parser1<String> elemAttrQ(QName elemNameQ, QName attrNameQ) {
+        return openQ(elemNameQ).nextR(attrQ(attrNameQ));
+    }
+
     public static <X> Parser<List<X>> manyWithin(String name, Parser<X> p) {
         return open(name).nextR(p.until(closing(name)));
     }
