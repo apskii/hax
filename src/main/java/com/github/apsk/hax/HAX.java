@@ -6,8 +6,10 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.XMLEvent;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class HAX {
     public static Parser1<?> open(String name) {
@@ -200,6 +202,52 @@ public class HAX {
                     return attr.getValue();
             }
             return null;
+        };
+    }
+
+    public static Parser1<Map<String, String>> attrs() {
+        return r -> {
+            if (!r.hasNext()) {
+                throw new ParseException(
+                        "`attrs` called at the end of stream."
+                );
+            }
+            XMLEvent event = r.peek();
+            if (!event.isStartElement()) {
+                throw new ParseException(
+                        "`attrs` called at non-opening element."
+                );
+            }
+            Map<String, String> attrs = new HashMap<>();
+            Iterator<Attribute> iterator = event.asStartElement().getAttributes();
+            while (iterator.hasNext()) {
+                Attribute attr = iterator.next();
+                attrs.put(attr.getName().getLocalPart(), attr.getValue());
+            }
+            return attrs;
+        };
+    }
+
+    public static Parser1<Map<QName, String>> attrsQ() {
+        return r -> {
+            if (!r.hasNext()) {
+                throw new ParseException(
+                        "`attrsQ` called at the end of stream."
+                );
+            }
+            XMLEvent event = r.peek();
+            if (!event.isStartElement()) {
+                throw new ParseException(
+                        "`attrsQ` called at non-opening element."
+                );
+            }
+            Map<QName, String> attrs = new HashMap<>();
+            Iterator<Attribute> iterator = event.asStartElement().getAttributes();
+            while (iterator.hasNext()) {
+                Attribute attr = iterator.next();
+                attrs.put(attr.getName(), attr.getValue());
+            }
+            return attrs;
         };
     }
 

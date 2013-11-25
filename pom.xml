@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.apsk</groupId>
     <artifactId>hax</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <dependencies>
         <dependency>
             <groupId>com.github.apsk</groupId>
