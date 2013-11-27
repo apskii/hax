@@ -11,7 +11,7 @@ public interface Parser5<A,B,C,D,E> extends Parser<Tuple5<A,B,C,D,E>> {
         return r -> {
             Tuple5<A,B,C,D,E> lhs = this.run(r);
             F rhs = p.run(r);
-            return tuple(lhs._1, lhs._2, lhs._3, lhs._4, lhs._5, rhs);
+            return tuple(lhs.$1, lhs.$2, lhs.$3, lhs.$4, lhs.$5, rhs);
         };
     }
     default Parser5<A,B,C,D,E> nextL(Parser<?> p) {
