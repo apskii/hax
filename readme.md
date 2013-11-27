@@ -23,11 +23,12 @@ public static class Op {
 ```java
 Parser<Op> op =
     within("op", attr("name"),
-        elemText("lhs").and(elemText("rhs")))
+        elemText("lhs"),
+        elemText("rhs"))
     .map(r -> new Op(
         Op.Type.valueOf(capitalize(r.$1)),
-        Integer.parseInt(r.$2.$1),
-        Integer.parseInt(r.$2.$2)
+        Integer.parseInt(r.$2),
+        Integer.parseInt(r.$3)
     ));
 HAXEventReader reader = new HAXEventReader(
     Entry.class.getClassLoader().getResourceAsStream("ops.xml")
