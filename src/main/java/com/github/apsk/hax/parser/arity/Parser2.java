@@ -13,7 +13,7 @@ public interface Parser2<A,B> extends Parser<Tuple2<A,B>> {
         return r -> {
             Tuple2<A,B> lhs = this.run(r);
             C rhs = p.run(r);
-            return tuple(lhs.val1, lhs.val2, rhs);
+            return tuple(lhs._1, lhs._2, rhs);
         };
     }
     default Parser2<A,B> nextL(Parser<?> p) {

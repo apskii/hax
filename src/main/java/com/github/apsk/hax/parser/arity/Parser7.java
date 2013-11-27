@@ -11,7 +11,7 @@ public interface Parser7<A,B,C,D,E,F,G> extends Parser<Tuple7<A,B,C,D,E,F,G>> {
         return r -> {
             Tuple7<A,B,C,D,E,F,G> lhs = this.run(r);
             H rhs = p.run(r);
-            return tuple(lhs.val1, lhs.val2, lhs.val3, lhs.val4, lhs.val5, lhs.val6, lhs.val7, rhs);
+            return tuple(lhs._1, lhs._2, lhs._3, lhs._4, lhs._5, lhs._6, lhs._7, rhs);
         };
     }
     default Parser7<A,B,C,D,E,F,G> nextL(Parser<?> p) {

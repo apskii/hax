@@ -11,7 +11,7 @@ public interface Parser6<A,B,C,D,E,F> extends Parser<Tuple6<A,B,C,D,E,F>> {
         return r -> {
             Tuple6<A,B,C,D,E,F> lhs = this.run(r);
             G rhs = p.run(r);
-            return tuple(lhs.val1, lhs.val2, lhs.val3, lhs.val4, lhs.val5, lhs.val6, rhs);
+            return tuple(lhs._1, lhs._2, lhs._3, lhs._4, lhs._5, lhs._6, rhs);
         };
     }
     default Parser6<A,B,C,D,E,F> nextL(Parser<?> p) {
