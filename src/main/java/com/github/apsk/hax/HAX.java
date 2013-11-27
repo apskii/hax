@@ -1,9 +1,8 @@
 package com.github.apsk.hax;
 
-import com.github.apsk.hax.parser.Parser;
-import com.github.apsk.hax.parser.ParserException;
-import com.github.apsk.hax.parser.arity.Parser1;
-import com.github.apsk.hax.parser.arity.Parser2;
+import com.github.apsk.hax.parser.*;
+import com.github.apsk.hax.parser.arity.*;
+import com.github.apsk.j8t.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.Attribute;
@@ -13,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class HAX {
+public final class HAX {
     public static Parser1<?> skipSpaces = r -> {
         XMLEvent event = r.cur();
         while (event.isCharacters() && event.asCharacters().isWhiteSpace()) {
@@ -162,6 +161,21 @@ public class HAX {
         return tryClose(new QName(name));
     }
 
+    public static Parser1<Boolean> closing(QName name) {
+        return r -> {
+            XMLEvent event = r.cur();
+            if (event.isEndElement()) {
+                QName eventElemName = event.asEndElement().getName();
+                if (eventElemName.equals(name)) return true;
+            }
+            return false;
+        };
+    }
+
+    public static Parser1<Boolean> closing(String name) {
+        return closing(new QName(name));
+    }
+
     public static Parser1<String> text = r -> {
         XMLEvent event = r.cur();
         if (!event.isCharacters()) {
@@ -205,6 +219,54 @@ public class HAX {
         }
         return attrs;
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    public static <A,B> Parser2<A,B> seq(Parser<A> pA, Parser<B> pB) {
+        return r -> new Tuple2<>(pA.run(r), pB.run(r));
+    }
+
+    public static <A,B,C> Parser3<A,B,C> seq(Parser<A> pA, Parser<B> pB, Parser<C> pC) {
+        return r -> new Tuple3<>(pA.run(r), pB.run(r), pC.run(r));
+    }
+
+    public static <A,B,C,D> Parser4<A,B,C,D> seq(Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD) {
+        return r -> new Tuple4<>(pA.run(r), pB.run(r), pC.run(r), pD.run(r));
+    }
+
+    public static <A,B,C,D,E> Parser5<A,B,C,D,E> seq(
+        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
+        Parser<E> pE
+    ) {
+        return r -> new Tuple5<>(pA.run(r), pB.run(r), pC.run(r), pD.run(r), pE.run(r));
+    }
+
+    public static <A,B,C,D,E,F> Parser6<A,B,C,D,E,F> seq(
+        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
+        Parser<E> pE, Parser<F> pF
+    ) {
+        return r -> new Tuple6<>(pA.run(r), pB.run(r), pC.run(r), pD.run(r), pE.run(r), pF.run(r));
+    }
+
+    public static <A,B,C,D,E,F,G> Parser7<A,B,C,D,E,F,G> seq(
+        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
+        Parser<E> pE, Parser<F> pF, Parser<G> pG
+    ) {
+        return r -> new Tuple7<>(
+            pA.run(r), pB.run(r), pC.run(r), pD.run(r),
+            pE.run(r), pF.run(r), pG.run(r)
+        );
+    }
+
+    public static <A,B,C,D,E,F,G,H> Parser8<A,B,C,D,E,F,G,H> seq(
+            Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
+            Parser<E> pE, Parser<F> pF, Parser<G> pG, Parser<H> pH
+    ) {
+        return r -> new Tuple8<>(
+            pA.run(r), pB.run(r), pC.run(r), pD.run(r),
+            pE.run(r), pF.run(r), pG.run(r), pH.run(r)
+        );
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////
 
@@ -257,19 +319,101 @@ public class HAX {
     }
 
     public static <X> Parser1<X> within(QName name, Parser<X> p) {
-        return open(name).nextR(p).nextL(close(name))::run;
+        return open(name, p).nextL(close(name))::run;
     }
 
     public static <X> Parser1<X> within(String name, Parser<X> p) {
         return within(new QName(name), p);
     }
 
-    public static <X,Y> Parser2<X,Y> within(QName name, Parser<X> t, Parser<Y> p) {
-        return opens(name).nextR(t.asParser1()).nextL(step).and(p).nextL(close(name));
+    public static <T,A> Parser2<T,A> within(QName name, Parser<T> t, Parser<A> pA) {
+        return seq(open(name, t), pA).nextL(close(name));
     }
 
-    public static <X,Y> Parser2<X,Y> within(String name, Parser<X> t, Parser<Y> p) {
-        return within(new QName(name), t, p);
+    public static <T,A,B> Parser3<T,A,B> within(QName name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB
+    ) {
+        return seq(open(name, t), pA, pB).nextL(close(name));
+    }
+
+    public static <T,A,B,C> Parser4<T,A,B,C> within(QName name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC
+    ) {
+        return seq(open(name, t), pA, pB, pC).nextL(close(name));
+    }
+
+    public static <T,A,B,C,D> Parser5<T,A,B,C,D> within(QName name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
+        Parser<D> pD
+    ) {
+        return seq(open(name, t), pA, pB, pC, pD).nextL(close(name));
+    }
+
+    public static <T,A,B,C,D,E> Parser6<T,A,B,C,D,E> within(QName name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
+        Parser<D> pD, Parser<E> pE
+    ) {
+        return seq(open(name, t), pA, pB, pC, pD, pE).nextL(close(name));
+    }
+
+    public static <T,A,B,C,D,E,F> Parser7<T,A,B,C,D,E,F> within(QName name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
+        Parser<D> pD, Parser<E> pE, Parser<F> pF
+    ) {
+        return seq(open(name, t), pA, pB, pC, pD, pE, pF).nextL(close(name));
+    }
+
+    public static <T,A,B,C,D,E,F,G> Parser8<T,A,B,C,D,E,F,G> within(QName name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
+        Parser<D> pD, Parser<E> pE, Parser<F> pF, Parser<G> pG
+    ) {
+        return seq(open(name, t), pA, pB, pC, pD, pE, pF, pG).nextL(close(name));
+    }
+
+    public static <T,A> Parser2<T,A> within(String name,
+        Parser<T> t, Parser<A> pA
+    ) {
+        return within(new QName(name), t, pA);
+    }
+
+    public static <T,A,B> Parser3<T,A,B> within(String name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB
+    ) {
+        return within(new QName(name), t, pA, pB);
+    }
+
+    public static <T,A,B,C> Parser4<T,A,B,C> within(String name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC
+    ) {
+        return within(new QName(name), t, pA, pB, pC);
+    }
+
+    public static <T,A,B,C,D> Parser5<T,A,B,C,D> within(String name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
+        Parser<D> pD
+    ) {
+        return within(new QName(name), t, pA, pB, pC, pD);
+    }
+
+    public static <T,A,B,C,D,E> Parser6<T,A,B,C,D,E> within(String name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
+        Parser<D> pD, Parser<E> pE
+    ) {
+        return within(new QName(name), t, pA, pB, pC, pD, pE);
+    }
+
+    public static <T,A,B,C,D,E,F> Parser7<T,A,B,C,D,E,F> within(String name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
+        Parser<D> pD, Parser<E> pE, Parser<F> pF
+    ) {
+        return within(new QName(name), t, pA, pB, pC, pD, pE, pF);
+    }
+
+    public static <T,A,B,C,D,E,F,G> Parser8<T,A,B,C,D,E,F,G> within(String name,
+        Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
+        Parser<D> pD, Parser<E> pE, Parser<F> pF, Parser<G> pG
+    ) {
+        return within(new QName(name), t, pA, pB, pC, pD, pE, pF, pG);
     }
 
     public static <X> Parser1<List<X>> manyWithin(QName name, Parser<X> p) {
@@ -281,7 +425,7 @@ public class HAX {
     }
 
     public static <X,Y> Parser2<X,List<Y>> manyWithin(QName name, Parser<X> t, Parser<Y> p) {
-        return opens(name).nextR(t.asParser1()).nextL(step).and(p.until(tryClose(name)));
+        return opens(name).nextR(t.merge()).nextL(step).and(p.until(tryClose(name)));
     }
 
     public static <X,Y> Parser2<X,List<Y>> manyWithin(String name, Parser<X> t, Parser<Y> p) {

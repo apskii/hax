@@ -29,7 +29,7 @@ public interface Parser<R> {
             return p.run(r);
         };
     }
-    default Parser1<R> asParser1() {
+    default Parser1<R> merge() {
         return this::run;
     }
 }

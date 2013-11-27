@@ -21,17 +21,19 @@ public class OpsParserTest {
             this.rhs = rhs;
         }
     }
+    static String capitalize(String s) {
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
     @Test
     public void checkOps() throws XMLStreamException {
-        Function<String,String> capitalize = s ->
-            Character.toUpperCase(s.charAt(0)) + s.substring(1);
         Parser<Op> op =
             within("op", attr("name"),
-                elemText("lhs").and(elemText("rhs")))
+                elemText("lhs"),
+                elemText("rhs"))
             .map(r -> new Op(
-                Op.Type.valueOf(capitalize.apply(r.$1)),
-                Integer.parseInt(r.$2.$1),
-                Integer.parseInt(r.$2.$2)
+                Op.Type.valueOf(capitalize(r.$1)),
+                Integer.parseInt(r.$2),
+                Integer.parseInt(r.$3)
             ));
         HAXEventReader reader = new HAXEventReader(
             getClass().getClassLoader().getResourceAsStream("ops.xml")
