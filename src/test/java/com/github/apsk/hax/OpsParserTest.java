@@ -29,9 +29,9 @@ public class OpsParserTest {
             within("op", attr("name"),
                 elemText("lhs").and(elemText("rhs")))
             .map(r -> new Op(
-                Op.Type.valueOf(capitalize.apply(r.val1)),
-                Integer.parseInt(r.val2.val1),
-                Integer.parseInt(r.val2.val2)
+                Op.Type.valueOf(capitalize.apply(r._1)),
+                Integer.parseInt(r._2._1),
+                Integer.parseInt(r._2._2)
             ));
         HAXEventReader reader = new HAXEventReader(
             getClass().getClassLoader().getResourceAsStream("ops.xml")
