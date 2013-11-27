@@ -32,7 +32,7 @@ Parser<Op> op =
 HAXEventReader reader = new HAXEventReader(
     Entry.class.getClassLoader().getResourceAsStream("ops.xml")
 );
-find("ops").run(reader);
+reader.skipTo("ops");
 Tuple2<String,List<Op>> result =
     manyWithin("ops", attr("class"), op).run(reader);
 ```
