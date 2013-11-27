@@ -1,6 +1,6 @@
-package com.github.apsk.hax.parsers;
+package com.github.apsk.hax.parser.arity;
 
-import com.github.apsk.hax.Parser;
+import com.github.apsk.hax.parser.Parser;
 import com.github.apsk.j8t.Tuple2;
 
 import javax.xml.stream.XMLStreamException;
@@ -14,6 +14,13 @@ public interface Parser2<A,B> extends Parser<Tuple2<A,B>> {
             Tuple2<A,B> lhs = this.run(r);
             C rhs = p.run(r);
             return tuple(lhs.val1, lhs.val2, rhs);
+        };
+    }
+    default Parser2<A,B> nextL(Parser<?> p) {
+        return r -> {
+            Tuple2<A,B> result = this.run(r);
+            p.run(r);
+            return result;
         };
     }
 }

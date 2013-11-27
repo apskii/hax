@@ -1,5 +1,5 @@
 ```xml
-<ops>
+<ops class="arith">
     <op name="sum"><lhs>3</lhs><rhs>6</rhs></op>
     <op name="mul"><lhs>3</lhs><rhs>3</rhs></op>
     <op name="sub"><lhs>10</lhs><rhs>1</rhs></op>
@@ -8,20 +8,31 @@
 ```
 
 ```java
-Function<String,String> capitalize = s ->
-    Character.toUpperCase(s.charAt(0)) + s.substring(1);
-Parser<Op> op = open("op")
-    .nextR(attr("name"))
-    .and(elemText("lhs"))
-    .and(elemText("rhs"))
-    .nextL(close("op"))
+public static class Op {
+    public enum Type { Sum, Sub, Mul, Div }
+    public final Type type;
+    public final int lhs, rhs;
+    public Op(Type type, int lhs, int rhs) {
+        this.type = type;
+        this.lhs = lhs;
+        this.rhs = rhs;
+    }
+}
+```
+
+```java
+Parser<Op> op =
+    within("op", attr("name"),
+        elemText("lhs").and(elemText("rhs")))
     .map(r -> new Op(
-        Op.Type.valueOf(capitalize.apply(r.val1)),
-        Integer.parseInt(r.val2),
-        Integer.parseInt(r.val3)
+        Op.Type.valueOf(capitalize(r._1)),
+        Integer.parseInt(r._2._1),
+        Integer.parseInt(r._2._2)
     ));
-XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(
-    getClass().getClassLoader().getResourceAsStream("ops.xml")
+HAXEventReader reader = new HAXEventReader(
+    Entry.class.getClassLoader().getResourceAsStream("ops.xml")
 );
-List<Op> ops = manyWithin("ops", op).run(reader);
+find("ops").run(reader);
+Tuple2<String,List<Op>> result =
+    manyWithin("ops", attr("class"), op).run(reader);
 ```

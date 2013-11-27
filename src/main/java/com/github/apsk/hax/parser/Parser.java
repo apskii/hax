@@ -1,8 +1,7 @@
-package com.github.apsk.hax;
+package com.github.apsk.hax.parser;
 
-import com.github.apsk.hax.parsers.Parser1;
+import com.github.apsk.hax.parser.arity.Parser1;
 
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +9,8 @@ import java.util.function.Function;
 
 @FunctionalInterface
 public interface Parser<R> {
-    R run(XMLEventReader eventReader) throws XMLStreamException;
+    R run(HAXEventReader eventReader) throws XMLStreamException;
+
     default <X> Parser<X> map(Function<R,X> f) {
         return r -> f.apply(this.run(r));
     }
@@ -23,17 +23,13 @@ public interface Parser<R> {
             }
         };
     }
-    default <X> Parser<R> nextL(Parser<X> p) {
-        return r -> {
-            R result = this.run(r);
-            p.run(r);
-            return result;
-        };
-    }
-    default <X> Parser<X> nextR(Parser<X> p) {
+    default <X> Parser1<X> nextR(Parser<X> p) {
         return r -> {
             this.run(r);
             return p.run(r);
         };
+    }
+    default Parser1<R> asParser1() {
+        return this::run;
     }
 }

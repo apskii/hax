@@ -1,11 +1,10 @@
 package com.github.apsk.hax;
 
+import com.github.apsk.hax.parser.HAXEventReader;
+import com.github.apsk.hax.parser.Parser;
 import org.junit.Test;
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import java.util.List;
 import java.util.function.Function;
 
 import static com.github.apsk.hax.HAX.*;
@@ -26,35 +25,39 @@ public class OpsParserTest {
     public void checkOps() throws XMLStreamException {
         Function<String,String> capitalize = s ->
             Character.toUpperCase(s.charAt(0)) + s.substring(1);
-        Parser<Op> op = open("op")
-            .nextR(attr("name"))
-            .and(elemText("lhs"))
-            .and(elemText("rhs"))
-            .nextL(close("op"))
+        Parser<Op> op =
+            within("op", attr("name"),
+                elemText("lhs").and(elemText("rhs")))
             .map(r -> new Op(
                 Op.Type.valueOf(capitalize.apply(r.val1)),
-                Integer.parseInt(r.val2),
-                Integer.parseInt(r.val3)
+                Integer.parseInt(r.val2.val1),
+                Integer.parseInt(r.val2.val2)
             ));
-        XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(
+        HAXEventReader reader = new HAXEventReader(
             getClass().getClassLoader().getResourceAsStream("ops.xml")
         );
-        List<Op> ops = manyWithin("ops", op).run(reader);
-        Op opA = ops.get(0);
-        assertEquals(opA.type, Op.Type.Sum);
-        assertEquals(opA.lhs, 3);
-        assertEquals(opA.rhs, 6);
-        Op opB = ops.get(1);
-        assertEquals(opB.type, Op.Type.Mul);
-        assertEquals(opB.lhs, 3);
-        assertEquals(opB.rhs, 3);
-        Op opC = ops.get(2);
-        assertEquals(opC.type, Op.Type.Sub);
-        assertEquals(opC.lhs, 10);
-        assertEquals(opC.rhs, 1);
-        Op opD = ops.get(3);
-        assertEquals(opD.type, Op.Type.Div);
-        assertEquals(opD.lhs, 18);
-        assertEquals(opD.rhs, 2);
+        find("ops").run(reader);
+        manyWithin("ops", attr("class"), op)
+            .run(reader)
+            .unpack((cls, ops) -> {
+                assertEquals(cls, "arith");
+                Op opA = ops.get(0);
+                assertEquals(opA.type, Op.Type.Sum);
+                assertEquals(opA.lhs, 3);
+                assertEquals(opA.rhs, 6);
+                Op opB = ops.get(1);
+                assertEquals(opB.type, Op.Type.Mul);
+                assertEquals(opB.lhs, 3);
+                assertEquals(opB.rhs, 3);
+                Op opC = ops.get(2);
+                assertEquals(opC.type, Op.Type.Sub);
+                assertEquals(opC.lhs, 10);
+                assertEquals(opC.rhs, 1);
+                Op opD = ops.get(3);
+                assertEquals(opD.type, Op.Type.Div);
+                assertEquals(opD.lhs, 18);
+                assertEquals(opD.rhs, 2);
+                return null;
+            });
     }
 }
