@@ -213,7 +213,7 @@ public class HAX {
     }
 
     public static <X> Parser1<X> open(String name, Parser<X> p) {
-        return opens(name).nextR(p).nextL(step);
+        return open(new QName(name), p);
     }
 
     public static Parser1<String> elemAttr(QName elemName, QName attrName) {
@@ -221,7 +221,7 @@ public class HAX {
     }
 
     public static Parser1<String> elemAttr(String elemName, String attrName) {
-        return opens(elemName).nextR(attr(attrName)).nextL(step).nextL(close(elemName));
+        return elemAttr(new QName(elemName), new QName(attrName));
     }
 
     public static Parser1<Map<QName, String>> elemAttrs(QName name) {
