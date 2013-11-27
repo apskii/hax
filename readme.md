@@ -25,9 +25,9 @@ Parser<Op> op =
     within("op", attr("name"),
         elemText("lhs").and(elemText("rhs")))
     .map(r -> new Op(
-        Op.Type.valueOf(capitalize(r._1)),
-        Integer.parseInt(r._2._1),
-        Integer.parseInt(r._2._2)
+        Op.Type.valueOf(capitalize(r.$1)),
+        Integer.parseInt(r.$2.$1),
+        Integer.parseInt(r.$2.$2)
     ));
 HAXEventReader reader = new HAXEventReader(
     Entry.class.getClassLoader().getResourceAsStream("ops.xml")
