@@ -37,7 +37,7 @@ public class HAX {
         return null;
     };
 
-    public static Parser1<?> find(QName name) {
+    public static Parser1<?> skipTo(QName name) {
         return r -> {
             for (;;) {
                 XMLEvent event = r.cur();
@@ -48,7 +48,7 @@ public class HAX {
                 }
                 if (!r.hasNext()) {
                     throw new ParserException(
-                        "`find(" + name + ")` reached the end of stream."
+                        "`skipTo(" + name + ")` reached the end of stream."
                     );
                 }
                 r.next();
@@ -56,8 +56,8 @@ public class HAX {
         };
     }
 
-    public static Parser1<?> find(String name) {
-        return find(new QName(name));
+    public static Parser1<?> skipTo(String name) {
+        return skipTo(new QName(name));
     }
 
     public static Parser1<?> open(QName name) {

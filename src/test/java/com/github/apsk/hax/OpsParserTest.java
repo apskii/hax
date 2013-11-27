@@ -36,7 +36,7 @@ public class OpsParserTest {
         HAXEventReader reader = new HAXEventReader(
             getClass().getClassLoader().getResourceAsStream("ops.xml")
         );
-        find("ops").run(reader);
+        reader.skipTo("ops");
         manyWithin("ops", attr("class"), op)
             .run(reader)
             .unpack((cls, ops) -> {

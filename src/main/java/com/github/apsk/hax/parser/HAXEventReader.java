@@ -1,5 +1,7 @@
 package com.github.apsk.hax.parser;
 
+import com.github.apsk.hax.HAX;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -34,5 +36,11 @@ public final class HAXEventReader {
     }
     public Iterator<Attribute> attrs() {
         return current.asStartElement().getAttributes();
+    }
+    public void skipTo(QName name) throws XMLStreamException {
+        HAX.skipTo(name).run(this);
+    }
+    public void skipTo(String name) throws XMLStreamException {
+        HAX.skipTo(new QName(name)).run(this);
     }
 }
