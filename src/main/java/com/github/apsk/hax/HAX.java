@@ -279,6 +279,14 @@ public final class HAX {
         return open(new QName(name), p);
     }
 
+    public static <X> Parser1<X> elem(QName name, Parser<X> p) {
+        return opens(name).nextR(p).nextL(step).nextL(close(name));
+    }
+
+    public static <X> Parser1<X> elem(String name, Parser<X> p) {
+        return elem(name, p);
+    }
+
     public static Parser1<String> elemAttr(QName elemName, QName attrName) {
         return opens(elemName).nextR(attr(attrName)).nextL(step).nextL(close(elemName));
     }
