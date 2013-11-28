@@ -456,4 +456,28 @@ public final class HAX {
     public static <X,Y> Parser<Tuple2<X,Stream<Y>>> streamManyWithin(String name, Parser<X> t, Parser<Y> p) {
         return streamManyWithin(new QName(name), t, p);
     }
+
+    public static Parser<?> evalManyWithin(QName name, Parser<?> p) {
+        return r -> {
+            open(name).run(r);
+            while (!tryClose(name).run(r)) p.run(r);
+            return null;
+        };
+    }
+
+    public static Parser<?> evalManyWithin(String name, Parser<?> p) {
+        return evalManyWithin(new QName(name), p);
+    }
+
+    public static <X> Parser<X> evalManyWithin(QName name, Parser<X> t, Parser<?> p) {
+        return r -> {
+            X x = opens(name).nextR(t).nextL(step).run(r);
+            while (!tryClose(name).run(r)) p.run(r);
+            return x;
+        };
+    }
+
+    public static <X> Parser<X> evalManyWithin(String name, Parser<X> t, Parser<?> p) {
+        return evalManyWithin(new QName(name), t, p);
+    }
 }
