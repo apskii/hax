@@ -5,6 +5,7 @@ import com.github.apsk.hax.parser.arity.Parser1;
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -15,6 +16,12 @@ public interface Parser<R> {
 
     default <X> Parser<X> map(Function<R,X> f) {
         return r -> f.apply(this.run(r));
+    }
+    default Parser<?> effect(Consumer<R> f) {
+        return r -> {
+            f.accept(this.run(r));
+            return null;
+        };
     }
     default Parser1<List<R>> until(Parser<Boolean> pred) {
         return r -> {
