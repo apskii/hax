@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public final class HAX {
     public static Parser1<?> skipSpaces = r -> {
@@ -425,10 +426,26 @@ public final class HAX {
     }
 
     public static <X,Y> Parser2<X,List<Y>> manyWithin(QName name, Parser<X> t, Parser<Y> p) {
-        return opens(name).nextR(t.merge()).nextL(step).and(p.until(tryClose(name)));
+        return opens(name).nextR(t).nextL(step).and(p.until(tryClose(name)));
     }
 
     public static <X,Y> Parser2<X,List<Y>> manyWithin(String name, Parser<X> t, Parser<Y> p) {
         return manyWithin(new QName(name), t, p);
+    }
+
+    public static <X> Parser<Stream<X>> streamManyWithin(QName name, Parser<X> p) {
+        return open(name).nextR(p.streamUntil(tryClose(name)));
+    }
+
+    public static <X> Parser<Stream<X>> streamManyWithin(String name, Parser<X> p) {
+        return streamManyWithin(new QName(name), p);
+    }
+
+    public static <X,Y> Parser<Tuple2<X,Stream<Y>>> streamManyWithin(QName name, Parser<X> t, Parser<Y> p) {
+        return opens(name).nextR(t).nextL(step).and(p.streamUntil(tryClose(name)));
+    }
+
+    public static <X,Y> Parser<Tuple2<X,Stream<Y>>> streamManyWithin(String name, Parser<X> t, Parser<Y> p) {
+        return streamManyWithin(new QName(name), t, p);
     }
 }
