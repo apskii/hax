@@ -1,14 +1,11 @@
 package com.github.apsk.hax;
 
+import javax.xml.stream.XMLStreamException;
 import com.github.apsk.hax.parser.HAXEventReader;
 import com.github.apsk.hax.parser.Parser;
 import org.junit.Test;
-
-import javax.xml.stream.XMLStreamException;
-import java.util.function.Function;
-
+import static org.junit.Assert.*;
 import static com.github.apsk.hax.HAX.*;
-import static junit.framework.Assert.assertEquals;
 
 public class OpsParserTest {
     public static class Op {
