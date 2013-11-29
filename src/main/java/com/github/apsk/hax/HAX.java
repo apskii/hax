@@ -284,7 +284,7 @@ public final class HAX {
     }
 
     public static <X> Parser1<X> elem(String name, Parser<X> p) {
-        return elem(name, p);
+        return elem(new QName(name), p);
     }
 
     public static Parser1<String> elemAttr(QName elemName, QName attrName) {
