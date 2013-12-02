@@ -9,7 +9,7 @@ import static com.github.apsk.j8t.Tuples.tuple;
 
 @FunctionalInterface
 public interface Parser2<A,B> extends Parser<Tuple2<A,B>> {
-    default <C> Parser3<A,B,C> and(Parser<C> p) throws XMLStreamException {
+    /*default <C> Parser3<A,B,C> and(Parser<C> p) throws XMLStreamException {
         return r -> {
             Tuple2<A,B> lhs = this.run(r);
             C rhs = p.run(r);
@@ -50,7 +50,7 @@ public interface Parser2<A,B> extends Parser<Tuple2<A,B>> {
             Tuple6<C,D,E,F,G,H> rhs = p.run(r);
             return new Tuple8<>(lhs.$1, lhs.$2, rhs.$1, rhs.$2, rhs.$3, rhs.$4, rhs.$5, rhs.$6);
         };
-    }
+    }*/
     default Parser2<A,B> nextL(Parser<?> p) {
         return r -> {
             Tuple2<A,B> result = this.run(r);

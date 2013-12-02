@@ -7,7 +7,7 @@ import static com.github.apsk.j8t.Tuples.tuple;
 
 @FunctionalInterface
 public interface Parser6<A,B,C,D,E,F> extends Parser<Tuple6<A,B,C,D,E,F>> {
-    default <G> Parser7<A,B,C,D,E,F,G> and(Parser<G> p) {
+    /*default <G> Parser7<A,B,C,D,E,F,G> and(Parser<G> p) {
         return r -> {
             Tuple6<A,B,C,D,E,F> lhs = this.run(r);
             G rhs = p.run(r);
@@ -20,7 +20,7 @@ public interface Parser6<A,B,C,D,E,F> extends Parser<Tuple6<A,B,C,D,E,F>> {
             Tuple2<G,H> rhs = p.run(r);
             return new Tuple8<>(lhs.$1, lhs.$2, lhs.$3, lhs.$4, lhs.$5, lhs.$6, rhs.$1, rhs.$2);
         };
-    }
+    }*/
     default Parser6<A,B,C,D,E,F> nextL(Parser<?> p) {
         return r -> {
             Tuple6<A,B,C,D,E,F> result = this.run(r);

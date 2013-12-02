@@ -12,34 +12,37 @@ import java.util.stream.StreamSupport;
 
 @FunctionalInterface
 public interface Parser<R> {
-    R run(HAXEventReader eventReader) throws XMLStreamException;
-
+    R run(HAXEventReader eventReader, R pool) throws XMLStreamException;
+    default R run(HAXEventReader eventReader) throws XMLStreamException {
+        return this.run(eventReader, null);
+    }
     default <X> Parser<X> map(Function<R,X> f) {
-        return r -> f.apply(this.run(r));
+        return (reader, _pool) -> f.apply(this.run(reader));
     }
     default Parser<?> effect(Consumer<R> f) {
-        return r -> {
-            f.accept(this.run(r));
+        return (reader, _pool) -> {
+            f.accept(this.run(reader));
             return null;
         };
     }
     default Parser1<List<R>> until(Parser<Boolean> pred) {
-        return r -> {
-            List<R> xs = new ArrayList<>();
+        return (reader, pool) -> {
+            List<R> xs = pool != null ? pool : new ArrayList<>();
+            xs.clear();
             for (;;) {
-                if (pred.run(r)) return xs;
-                xs.add(this.run(r));
+                if (pred.run(reader)) return xs;
+                xs.add(this.run(reader));
             }
         };
     }
     default Parser<Stream<R>> streamUntil(Parser<Boolean> pred) {
-        return r -> StreamSupport.stream(
-            new ParserLoop<>(this, pred, r), false);
+        return (reader, _pool) -> StreamSupport.stream(
+            new ParserLoop<>(this, pred, reader), false);
     }
-    default <X> Parser1<X> nextR(Parser<X> p) {
-        return r -> {
-            this.run(r);
-            return p.run(r);
+    default <X> Parser1<X> nextR(Parser<X> pX) {
+        return (reader, _pool) -> {
+            this.run(reader);
+            return pX.run(reader, _pool);
         };
     }
     default Parser1<R> merge() {

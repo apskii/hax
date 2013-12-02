@@ -5,7 +5,7 @@ import com.github.apsk.j8t.*;
 
 @FunctionalInterface
 public interface Parser1<A> extends Parser<A> {
-    default <B> Parser2<A,B> and(Parser<B> p) {
+    /*default <B> Parser2<A,B> and(Parser<B> p) {
         return r -> new Tuple2<>(this.run(r), p.run(r));
     }
     default <B,C> Parser3<A,B,C> and(Parser2<B,C> p) {
@@ -49,7 +49,7 @@ public interface Parser1<A> extends Parser<A> {
             Tuple7<B,C,D,E,F,G,H> rhs = p.run(r);
             return new Tuple8<>(lhs, rhs.$1, rhs.$2, rhs.$3, rhs.$4, rhs.$5, rhs.$6, rhs.$7);
         };
-    }
+    }*/
     default Parser1<A> nextL(Parser<?> p) {
         return r -> {
             A result = this.run(r);
