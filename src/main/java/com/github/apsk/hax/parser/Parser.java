@@ -35,6 +35,13 @@ public interface Parser<R> {
             }
         };
     }
+    default Parser<?> until_(Parser<Boolean> pred) {
+        return (reader, _pool) -> {
+            while (!pred.run(reader))
+                this.run(reader);
+            return null;
+        };
+    }
     default Parser<Stream<R>> streamUntil(Parser<Boolean> pred) {
         return (reader, _pool) -> StreamSupport.stream(
             new ParserLoop<>(this, pred, reader), false);
@@ -47,5 +54,21 @@ public interface Parser<R> {
     }
     default Parser1<R> merge() {
         return this::run;
+    }
+    default Parser<R> pool() {
+        class Ref { public R val; }
+        Ref pool = new Ref();
+        return (r, p) -> {
+            if (p == null) {
+                if (pool.val == null) {
+                    pool.val = this.run(r);
+                } else {
+                    this.run(r, pool.val);
+                }
+                return pool.val;
+            } else {
+                return this.run(r, p);
+            }
+        };
     }
 }

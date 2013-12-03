@@ -528,8 +528,6 @@ public final class HAX {
         return within(new QName(name), t, pA, pB, pC, pD, pE, pF, pG);
     }
 
-
-
     //-------------------------------------------------------------------------------------------//
 
     public static <X> Parser1<List<X>> manyWithin(QName name, Parser<X> p) {
@@ -564,37 +562,18 @@ public final class HAX {
         return streamManyWithin(new QName(name), t, p);
     }
 
-    public static <B> Parser<?> evalManyWithin(QName name, Parser<B> bodyParser) {
-        return (reader, _pool) -> {
-            open(name).run(reader);
-            B pool = null;
-            if (!tryClose(name).run(reader))
-                pool = bodyParser.run(reader);
-            while (!tryClose(name).run(reader))
-                bodyParser.run(reader, pool);
-            return null;
-        };
+    public static <B> Parser<?> evalManyWithin(QName name, Parser<?> bodyParser) {
+        return open(name).nextL(bodyParser.until_(tryClose(name)));
     }
 
     public static Parser<?> evalManyWithin(String name, Parser<?> p) {
         return evalManyWithin(new QName(name), p);
     }
 
-    public static <T,B> Parser<T> evalManyWithin(
-        QName name, Parser<T> targetParser, Parser<B> bodyParser
+    public static <T> Parser<T> evalManyWithin(
+        QName name, Parser<T> targetParser, Parser<?> bodyParser
     ) {
-        return (reader, pool) -> {
-            T result = opens(name)
-                .nextR(targetParser)
-                .nextL(step)
-                .run(reader, pool);
-            B bodyPool = null;
-            if (!tryClose(name).run(reader))
-                bodyPool = bodyParser.run(reader);
-            while (!tryClose(name).run(reader))
-                bodyParser.run(reader, bodyPool);
-            return result;
-        };
+        return opens(name).nextR(targetParser).nextL(step).nextL(bodyParser.until_(tryClose(name)));
     }
 
     public static <X> Parser<X> evalManyWithin(String name, Parser<X> t, Parser<?> p) {
