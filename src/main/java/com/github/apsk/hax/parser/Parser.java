@@ -56,7 +56,7 @@ public interface Parser<R> {
         return this::run;
     }
     default Parser<R> pool() {
-        class Ref { public R val; }
+        class Ref { public R val = null; }
         Ref pool = new Ref();
         return (r, p) -> {
             if (p == null) {

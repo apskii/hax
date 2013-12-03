@@ -51,9 +51,9 @@ public interface Parser1<A> extends Parser<A> {
         };
     }*/
     default Parser1<A> nextL(Parser<?> p) {
-        return r -> {
-            A result = this.run(r);
-            p.run(r);
+        return (reader, pool) -> {
+            A result = this.run(reader, pool);
+            p.run(reader);
             return result;
         };
     }

@@ -22,9 +22,9 @@ public interface Parser6<A,B,C,D,E,F> extends Parser<Tuple6<A,B,C,D,E,F>> {
         };
     }*/
     default Parser6<A,B,C,D,E,F> nextL(Parser<?> p) {
-        return r -> {
-            Tuple6<A,B,C,D,E,F> result = this.run(r);
-            p.run(r);
+        return (reader, pool) -> {
+            Tuple6<A,B,C,D,E,F> result = this.run(reader, pool);
+            p.run(reader);
             return result;
         };
     }

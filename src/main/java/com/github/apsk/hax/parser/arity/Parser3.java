@@ -45,9 +45,9 @@ public interface Parser3<A,B,C> extends Parser<Tuple3<A,B,C>> {
         };
     }*/
     default Parser3<A,B,C> nextL(Parser<?> p) {
-        return r -> {
-            Tuple3<A,B,C> result = this.run(r);
-            p.run(r);
+        return (reader, pool) -> {
+            Tuple3<A,B,C> result = this.run(reader, pool);
+            p.run(reader);
             return result;
         };
     }

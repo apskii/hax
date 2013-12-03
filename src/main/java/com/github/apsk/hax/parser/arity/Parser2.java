@@ -52,9 +52,9 @@ public interface Parser2<A,B> extends Parser<Tuple2<A,B>> {
         };
     }*/
     default Parser2<A,B> nextL(Parser<?> p) {
-        return r -> {
-            Tuple2<A,B> result = this.run(r);
-            p.run(r);
+        return (reader, pool) -> {
+            Tuple2<A,B> result = this.run(reader, pool);
+            p.run(reader);
             return result;
         };
     }
