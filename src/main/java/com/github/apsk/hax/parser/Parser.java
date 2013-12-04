@@ -57,18 +57,17 @@ public interface Parser<R> {
     }
     default Parser<R> pool() {
         class Ref { public R val = null; }
-        Ref pool = new Ref();
-        return (r, p) -> {
-            if (p == null) {
-                if (pool.val == null) {
-                    pool.val = this.run(r);
-                } else {
-                    this.run(r, pool.val);
-                }
-                return pool.val;
-            } else {
-                return this.run(r, p);
+        Ref selfPool = new Ref();
+        return (reader, pool) -> {
+            if (pool != null) {
+                return this.run(reader, pool);
             }
+            if (selfPool.val == null) {
+                selfPool.val = this.run(reader);
+            } else {
+                this.run(reader, selfPool.val);
+            }
+            return selfPool.val;
         };
     }
 }

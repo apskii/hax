@@ -216,7 +216,7 @@ public final class HAX {
 
     //-------------------------------------------------------------------------------------------//
 
-    public static <A,B> Parser2<A,B> seq(Parser<A> pA, Parser<B> pB) {
+    public static <A,B> Parser2<A,B> rawSeq(Parser<A> pA, Parser<B> pB) {
         return (r, p) -> {
             if (p == null) {
                 return new Tuple2<>(
@@ -230,7 +230,7 @@ public final class HAX {
         };
     }
 
-    public static <A,B,C> Parser3<A,B,C> seq(Parser<A> pA, Parser<B> pB, Parser<C> pC) {
+    public static <A,B,C> Parser3<A,B,C> rawSeq(Parser<A> pA, Parser<B> pB, Parser<C> pC) {
         return (r, p) -> {
             if (p == null) {
                 return new Tuple3<>(
@@ -246,8 +246,8 @@ public final class HAX {
         };
     }
 
-    public static <A,B,C,D> Parser4<A,B,C,D> seq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD
+    public static <A,B,C,D> Parser4<A,B,C,D> rawSeq(
+            Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD
     ) {
         return (r, p) -> {
             if (p == null) {
@@ -266,7 +266,7 @@ public final class HAX {
         };
     }
 
-    public static <A,B,C,D,E> Parser5<A,B,C,D,E> seq(
+    public static <A,B,C,D,E> Parser5<A,B,C,D,E> rawSeq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE
     ) {
@@ -289,7 +289,7 @@ public final class HAX {
         };
     }
 
-    public static <A,B,C,D,E,F> Parser6<A,B,C,D,E,F> seq(
+    public static <A,B,C,D,E,F> Parser6<A,B,C,D,E,F> rawSeq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE, Parser<F> pF
     ) {
@@ -314,7 +314,7 @@ public final class HAX {
         };
     }
 
-    public static <A,B,C,D,E,F,G> Parser7<A,B,C,D,E,F,G> seq(
+    public static <A,B,C,D,E,F,G> Parser7<A,B,C,D,E,F,G> rawSeq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE, Parser<F> pF, Parser<G> pG
     ) {
@@ -341,7 +341,7 @@ public final class HAX {
         };
     }
 
-    public static <A,B,C,D,E,F,G,H> Parser8<A,B,C,D,E,F,G,H> seq(
+    public static <A,B,C,D,E,F,G,H> Parser8<A,B,C,D,E,F,G,H> rawSeq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE, Parser<F> pF, Parser<G> pG, Parser<H> pH
     ) {
@@ -367,6 +367,90 @@ public final class HAX {
             p.$7 = pG.run(r, p.$7);
             p.$8 = pH.run(r, p.$8);
             return p;
+        };
+    }
+
+    public static <A,B> Parser2<A,B> seq(Parser<A> pA, Parser<B> pB) {
+        Ref<Tuple2<A,B>> artificialPool = new Ref<>();
+        Parser2<A,B> rawParser = rawSeq(pA, pB);
+        return (reader, pool) -> {
+            if (pool != null) return rawParser.run(reader, pool);
+            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
+            else return artificialPool.val = rawParser.run(reader);
+        };
+    }
+
+    public static <A,B,C> Parser3<A,B,C> seq(Parser<A> pA, Parser<B> pB, Parser<C> pC) {
+        Ref<Tuple3<A,B,C>> artificialPool = new Ref<>();
+        Parser3<A,B,C> rawParser = rawSeq(pA, pB, pC);
+        return (reader, pool) -> {
+            if (pool != null) return rawParser.run(reader, pool);
+            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
+            else return artificialPool.val = rawParser.run(reader);
+        };
+    }
+
+    public static <A,B,C,D> Parser4<A,B,C,D> seq(
+            Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD
+    ) {
+        Ref<Tuple4<A,B,C,D>> artificialPool = new Ref<>();
+        Parser4<A,B,C,D> rawParser = rawSeq(pA, pB, pC, pD);
+        return (reader, pool) -> {
+            if (pool != null) return rawParser.run(reader, pool);
+            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
+            else return artificialPool.val = rawParser.run(reader);
+        };
+    }
+
+    public static <A,B,C,D,E> Parser5<A,B,C,D,E> seq(
+            Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
+            Parser<E> pE
+    ) {
+        Ref<Tuple5<A,B,C,D,E>> artificialPool = new Ref<>();
+        Parser5<A,B,C,D,E> rawParser = rawSeq(pA, pB, pC, pD, pE);
+        return (reader, pool) -> {
+            if (pool != null) return rawParser.run(reader, pool);
+            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
+            else return artificialPool.val = rawParser.run(reader);
+        };
+    }
+
+    public static <A,B,C,D,E,F> Parser6<A,B,C,D,E,F> seq(
+            Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
+            Parser<E> pE, Parser<F> pF
+    ) {
+        Ref<Tuple6<A,B,C,D,E,F>> artificialPool = new Ref<>();
+        Parser6<A,B,C,D,E,F> rawParser = rawSeq(pA, pB, pC, pD, pE, pF);
+        return (reader, pool) -> {
+            if (pool != null) return rawParser.run(reader, pool);
+            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
+            else return artificialPool.val = rawParser.run(reader);
+        };
+    }
+
+    public static <A,B,C,D,E,F,G> Parser7<A,B,C,D,E,F,G> seq(
+            Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
+            Parser<E> pE, Parser<F> pF, Parser<G> pG
+    ) {
+        Ref<Tuple7<A,B,C,D,E,F,G>> artificialPool = new Ref<>();
+        Parser7<A,B,C,D,E,F,G> rawParser = rawSeq(pA, pB, pC, pD, pE, pF, pG);
+        return (reader, pool) -> {
+            if (pool != null) return rawParser.run(reader, pool);
+            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
+            else return artificialPool.val = rawParser.run(reader);
+        };
+    }
+
+    public static <A,B,C,D,E,F,G,H> Parser8<A,B,C,D,E,F,G,H> seq(
+            Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
+            Parser<E> pE, Parser<F> pF, Parser<G> pG, Parser<H> pH
+    ) {
+        Ref<Tuple8<A,B,C,D,E,F,G,H>> artificialPool = new Ref<>();
+        Parser8<A,B,C,D,E,F,G,H> rawParser = rawSeq(pA, pB, pC, pD, pE, pF, pG, pH);
+        return (reader, pool) -> {
+            if (pool != null) return rawParser.run(reader, pool);
+            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
+            else return artificialPool.val = rawParser.run(reader);
         };
     }
 
