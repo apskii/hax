@@ -1,8 +1,7 @@
 package com.github.apsk.hax;
 
 import javax.xml.stream.XMLStreamException;
-import com.github.apsk.hax.parser.HAXEventReader;
-import com.github.apsk.hax.parser.Parser;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static com.github.apsk.hax.HAX.*;

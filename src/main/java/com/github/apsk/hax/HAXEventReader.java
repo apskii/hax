@@ -1,4 +1,4 @@
-package com.github.apsk.hax.parser;
+package com.github.apsk.hax;
 
 import com.github.apsk.hax.HAX;
 

@@ -1,7 +1,5 @@
 package com.github.apsk.hax;
 
-import com.github.apsk.hax.parser.*;
-import com.github.apsk.hax.parser.arity.*;
 import com.github.apsk.j8t.*;
 
 import javax.xml.namespace.QName;
@@ -11,10 +9,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public final class HAX {
-    public static Parser1<?> skipSpaces = (reader, _pool) -> {
+    public static Parser<?> skipSpaces = (reader, _pool) -> {
         XMLEvent event = reader.cur();
         while (event.isCharacters() && event.asCharacters().isWhiteSpace()) {
             event = reader.next();
@@ -22,13 +19,13 @@ public final class HAX {
         return null;
     };
 
-    public static Parser1<?> step = (reader, _pool) -> {
+    public static Parser<?> step = (reader, _pool) -> {
         reader.next();
         skipSpaces.run(reader);
         return null;
     };
 
-    public static Parser1<?> skipTo(QName name) {
+    public static Parser<?> skipTo(QName name) {
         return (reader, _pool) -> {
             for (;;) {
                 XMLEvent event = reader.cur();
@@ -47,11 +44,11 @@ public final class HAX {
         };
     }
 
-    public static Parser1<?> skipTo(String name) {
+    public static Parser<?> skipTo(String name) {
         return skipTo(new QName(name));
     }
 
-    public static Parser1<?> open(QName name) {
+    public static Parser<?> open(QName name) {
         return (reader, _pool) -> {
             XMLEvent event = reader.cur();
             if (event.isStartElement()) {
@@ -73,11 +70,11 @@ public final class HAX {
         };
     }
 
-    public static Parser1<?> open(String name) {
+    public static Parser<?> open(String name) {
         return open(new QName(name));
     }
 
-    public static Parser1<?> opens(QName name) {
+    public static Parser<?> opens(QName name) {
         return (reader, _pool) -> {
             XMLEvent event = reader.cur();
             if (event.isStartElement()) {
@@ -97,11 +94,11 @@ public final class HAX {
         };
     }
 
-    public static Parser1<?> opens(String name) {
+    public static Parser<?> opens(String name) {
         return opens(new QName(name));
     }
 
-    public static Parser1<?> close(QName name) {
+    public static Parser<?> close(QName name) {
         return (reader, _pool) -> {
             XMLEvent event = reader.cur();
             if (event.isEndElement()) {
@@ -122,11 +119,11 @@ public final class HAX {
         };
     }
 
-    public static Parser1<?> close(String name) {
+    public static Parser<?> close(String name) {
         return close(new QName(name));
     }
 
-    public static Parser1<Boolean> tryClose(QName name) {
+    public static Parser<Boolean> tryClose(QName name) {
         return (reader, _pool) -> {
             for (;;) {
                 XMLEvent event = reader.cur();
@@ -150,11 +147,11 @@ public final class HAX {
         };
     }
 
-    public static Parser1<Boolean> tryClose(String name) {
+    public static Parser<Boolean> tryClose(String name) {
         return tryClose(new QName(name));
     }
 
-    public static Parser1<Boolean> closing(QName name) {
+    public static Parser<Boolean> closing(QName name) {
         return (reader, _pool) -> {
             XMLEvent event = reader.cur();
             if (event.isEndElement()) {
@@ -165,11 +162,11 @@ public final class HAX {
         };
     }
 
-    public static Parser1<Boolean> closing(String name) {
+    public static Parser<Boolean> closing(String name) {
         return closing(new QName(name));
     }
 
-    public static Parser1<String> text = (reader, _pool) -> {
+    public static Parser<String> text = (reader, _pool) -> {
         XMLEvent event = reader.cur();
         if (!event.isCharacters()) {
             if (event.isEndElement()) return "";
@@ -185,7 +182,7 @@ public final class HAX {
         return stringBuilder.toString();
     };
 
-    public static Parser1<String> attr(QName name) {
+    public static Parser<String> attr(QName name) {
         return (reader, _pool) -> {
             XMLEvent event = reader.cur();
             if (!event.isStartElement()) {
@@ -197,11 +194,11 @@ public final class HAX {
         };
     }
 
-    public static Parser1<String> attr(String name) {
+    public static Parser<String> attr(String name) {
         return attr(new QName(name));
     }
 
-    public static Parser1<Map<QName, String>> attrs = (reader, _pool) -> {
+    public static Parser<Map<QName, String>> attrs = (reader, _pool) -> {
         if (!reader.cur().isStartElement()) {
             throw new ParserException("`attrs` called at non-opening element.");
         }
@@ -216,396 +213,371 @@ public final class HAX {
 
     //-------------------------------------------------------------------------------------------//
 
-    public static <A,B> Parser2<A,B> rawSeq(Parser<A> pA, Parser<B> pB) {
-        return (r, p) -> {
-            if (p == null) {
+    public static <A,B> Parser<Tuple2<A,B>> rawSeq(Parser<A> pA, Parser<B> pB) {
+        return (reader, pool) -> {
+            if (pool == null) {
                 return new Tuple2<>(
-                    pA.run(r),
-                    pB.run(r)
+                    pA.run(reader),
+                    pB.run(reader)
                 );
             }
-            p.$1 = pA.run(r, p.$1);
-            p.$2 = pB.run(r, p.$2);
-            return p;
+            pool.$1 = pA.run(reader, pool.$1);
+            pool.$2 = pB.run(reader, pool.$2);
+            return pool;
         };
     }
 
-    public static <A,B,C> Parser3<A,B,C> rawSeq(Parser<A> pA, Parser<B> pB, Parser<C> pC) {
-        return (r, p) -> {
-            if (p == null) {
+    public static <A,B,C> Parser<Tuple3<A,B,C>> rawSeq(Parser<A> pA, Parser<B> pB, Parser<C> pC) {
+        return (reader, pool) -> {
+            if (pool == null) {
                 return new Tuple3<>(
-                    pA.run(r),
-                    pB.run(r),
-                    pC.run(r)
+                    pA.run(reader),
+                    pB.run(reader),
+                    pC.run(reader)
                 );
             }
-            p.$1 = pA.run(r, p.$1);
-            p.$2 = pB.run(r, p.$2);
-            p.$3 = pC.run(r, p.$3);
-            return p;
+            pool.$1 = pA.run(reader, pool.$1);
+            pool.$2 = pB.run(reader, pool.$2);
+            pool.$3 = pC.run(reader, pool.$3);
+            return pool;
         };
     }
 
-    public static <A,B,C,D> Parser4<A,B,C,D> rawSeq(
+    public static <A,B,C,D> Parser<Tuple4<A,B,C,D>> rawSeq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD
     ) {
-        return (r, p) -> {
-            if (p == null) {
+        return (reader, pool) -> {
+            if (pool == null) {
                 return new Tuple4<>(
-                    pA.run(r),
-                    pB.run(r),
-                    pC.run(r),
-                    pD.run(r)
+                    pA.run(reader),
+                    pB.run(reader),
+                    pC.run(reader),
+                    pD.run(reader)
                 );
             }
-            p.$1 = pA.run(r, p.$1);
-            p.$2 = pB.run(r, p.$2);
-            p.$3 = pC.run(r, p.$3);
-            p.$4 = pD.run(r, p.$4);
-            return p;
+            pool.$1 = pA.run(reader, pool.$1);
+            pool.$2 = pB.run(reader, pool.$2);
+            pool.$3 = pC.run(reader, pool.$3);
+            pool.$4 = pD.run(reader, pool.$4);
+            return pool;
         };
     }
 
-    public static <A,B,C,D,E> Parser5<A,B,C,D,E> rawSeq(
+    public static <A,B,C,D,E> Parser<Tuple5<A,B,C,D,E>> rawSeq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE
     ) {
-        return (r, p) -> {
-            if (p == null) {
+        return (reader, pool) -> {
+            if (pool == null) {
                 return new Tuple5<>(
-                    pA.run(r),
-                    pB.run(r),
-                    pC.run(r),
-                    pD.run(r),
-                    pE.run(r)
+                    pA.run(reader),
+                    pB.run(reader),
+                    pC.run(reader),
+                    pD.run(reader),
+                    pE.run(reader)
                 );
             }
-            p.$1 = pA.run(r, p.$1);
-            p.$2 = pB.run(r, p.$2);
-            p.$3 = pC.run(r, p.$3);
-            p.$4 = pD.run(r, p.$4);
-            p.$5 = pE.run(r, p.$5);
-            return p;
+            pool.$1 = pA.run(reader, pool.$1);
+            pool.$2 = pB.run(reader, pool.$2);
+            pool.$3 = pC.run(reader, pool.$3);
+            pool.$4 = pD.run(reader, pool.$4);
+            pool.$5 = pE.run(reader, pool.$5);
+            return pool;
         };
     }
 
-    public static <A,B,C,D,E,F> Parser6<A,B,C,D,E,F> rawSeq(
+    public static <A,B,C,D,E,F> Parser<Tuple6<A,B,C,D,E,F>> rawSeq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE, Parser<F> pF
     ) {
-        return (r, p) -> {
-            if (p == null) {
+        return (reader, pool) -> {
+            if (pool == null) {
                 return new Tuple6<>(
-                    pA.run(r),
-                    pB.run(r),
-                    pC.run(r),
-                    pD.run(r),
-                    pE.run(r),
-                    pF.run(r)
+                    pA.run(reader),
+                    pB.run(reader),
+                    pC.run(reader),
+                    pD.run(reader),
+                    pE.run(reader),
+                    pF.run(reader)
                 );
             }
-            p.$1 = pA.run(r, p.$1);
-            p.$2 = pB.run(r, p.$2);
-            p.$3 = pC.run(r, p.$3);
-            p.$4 = pD.run(r, p.$4);
-            p.$5 = pE.run(r, p.$5);
-            p.$6 = pF.run(r, p.$6);
-            return p;
+            pool.$1 = pA.run(reader, pool.$1);
+            pool.$2 = pB.run(reader, pool.$2);
+            pool.$3 = pC.run(reader, pool.$3);
+            pool.$4 = pD.run(reader, pool.$4);
+            pool.$5 = pE.run(reader, pool.$5);
+            pool.$6 = pF.run(reader, pool.$6);
+            return pool;
         };
     }
 
-    public static <A,B,C,D,E,F,G> Parser7<A,B,C,D,E,F,G> rawSeq(
+    public static <A,B,C,D,E,F,G> Parser<Tuple7<A,B,C,D,E,F,G>> rawSeq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE, Parser<F> pF, Parser<G> pG
     ) {
-        return (r, p) -> {
-            if (p == null) {
+        return (reader, pool) -> {
+            if (pool == null) {
                 return new Tuple7<>(
-                    pA.run(r),
-                    pB.run(r),
-                    pC.run(r),
-                    pD.run(r),
-                    pE.run(r),
-                    pF.run(r),
-                    pG.run(r)
+                    pA.run(reader),
+                    pB.run(reader),
+                    pC.run(reader),
+                    pD.run(reader),
+                    pE.run(reader),
+                    pF.run(reader),
+                    pG.run(reader)
                 );
             }
-            p.$1 = pA.run(r, p.$1);
-            p.$2 = pB.run(r, p.$2);
-            p.$3 = pC.run(r, p.$3);
-            p.$4 = pD.run(r, p.$4);
-            p.$5 = pE.run(r, p.$5);
-            p.$6 = pF.run(r, p.$6);
-            p.$7 = pG.run(r, p.$7);
-            return p;
+            pool.$1 = pA.run(reader, pool.$1);
+            pool.$2 = pB.run(reader, pool.$2);
+            pool.$3 = pC.run(reader, pool.$3);
+            pool.$4 = pD.run(reader, pool.$4);
+            pool.$5 = pE.run(reader, pool.$5);
+            pool.$6 = pF.run(reader, pool.$6);
+            pool.$7 = pG.run(reader, pool.$7);
+            return pool;
         };
     }
 
-    public static <A,B,C,D,E,F,G,H> Parser8<A,B,C,D,E,F,G,H> rawSeq(
+    public static <A,B,C,D,E,F,G,H> Parser<Tuple8<A,B,C,D,E,F,G,H>> rawSeq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE, Parser<F> pF, Parser<G> pG, Parser<H> pH
     ) {
-        return (r, p) -> {
-            if (p == null) {
+        return (reader, pool) -> {
+            if (pool == null) {
                 return new Tuple8<>(
-                    pA.run(r),
-                    pB.run(r),
-                    pC.run(r),
-                    pD.run(r),
-                    pE.run(r),
-                    pF.run(r),
-                    pG.run(r),
-                    pH.run(r)
+                    pA.run(reader),
+                    pB.run(reader),
+                    pC.run(reader),
+                    pD.run(reader),
+                    pE.run(reader),
+                    pF.run(reader),
+                    pG.run(reader),
+                    pH.run(reader)
                 );
             }
-            p.$1 = pA.run(r, p.$1);
-            p.$2 = pB.run(r, p.$2);
-            p.$3 = pC.run(r, p.$3);
-            p.$4 = pD.run(r, p.$4);
-            p.$5 = pE.run(r, p.$5);
-            p.$6 = pF.run(r, p.$6);
-            p.$7 = pG.run(r, p.$7);
-            p.$8 = pH.run(r, p.$8);
-            return p;
+            pool.$1 = pA.run(reader, pool.$1);
+            pool.$2 = pB.run(reader, pool.$2);
+            pool.$3 = pC.run(reader, pool.$3);
+            pool.$4 = pD.run(reader, pool.$4);
+            pool.$5 = pE.run(reader, pool.$5);
+            pool.$6 = pF.run(reader, pool.$6);
+            pool.$7 = pG.run(reader, pool.$7);
+            pool.$8 = pH.run(reader, pool.$8);
+            return pool;
         };
     }
 
-    public static <A,B> Parser2<A,B> seq(Parser<A> pA, Parser<B> pB) {
-        Ref<Tuple2<A,B>> artificialPool = new Ref<>();
-        Parser2<A,B> rawParser = rawSeq(pA, pB);
-        return (reader, pool) -> {
-            if (pool != null) return rawParser.run(reader, pool);
-            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
-            else return artificialPool.val = rawParser.run(reader);
-        };
+    public static <A,B> PooledParser<Tuple2<A,B>> seq(Parser<A> pA, Parser<B> pB) {
+        return PooledParser.from(rawSeq(
+            pA.purify(), pB.purify()
+        ));
     }
 
-    public static <A,B,C> Parser3<A,B,C> seq(Parser<A> pA, Parser<B> pB, Parser<C> pC) {
-        Ref<Tuple3<A,B,C>> artificialPool = new Ref<>();
-        Parser3<A,B,C> rawParser = rawSeq(pA, pB, pC);
-        return (reader, pool) -> {
-            if (pool != null) return rawParser.run(reader, pool);
-            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
-            else return artificialPool.val = rawParser.run(reader);
-        };
+    public static <A,B,C> PooledParser<Tuple3<A,B,C>> seq(Parser<A> pA, Parser<B> pB, Parser<C> pC) {
+        return PooledParser.from(rawSeq(
+            pA.purify(), pB.purify(), pC.purify()
+        ));
     }
 
-    public static <A,B,C,D> Parser4<A,B,C,D> seq(
+    public static <A,B,C,D> PooledParser<Tuple4<A,B,C,D>> seq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD
     ) {
-        Ref<Tuple4<A,B,C,D>> artificialPool = new Ref<>();
-        Parser4<A,B,C,D> rawParser = rawSeq(pA, pB, pC, pD);
-        return (reader, pool) -> {
-            if (pool != null) return rawParser.run(reader, pool);
-            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
-            else return artificialPool.val = rawParser.run(reader);
-        };
+        return PooledParser.from(rawSeq(
+            pA.purify(), pB.purify(), pC.purify(), pD.purify()
+        ));
     }
 
-    public static <A,B,C,D,E> Parser5<A,B,C,D,E> seq(
+    public static <A,B,C,D,E> PooledParser<Tuple5<A,B,C,D,E>> seq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE
     ) {
-        Ref<Tuple5<A,B,C,D,E>> artificialPool = new Ref<>();
-        Parser5<A,B,C,D,E> rawParser = rawSeq(pA, pB, pC, pD, pE);
-        return (reader, pool) -> {
-            if (pool != null) return rawParser.run(reader, pool);
-            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
-            else return artificialPool.val = rawParser.run(reader);
-        };
+        return PooledParser.from(rawSeq(
+            pA.purify(), pB.purify(), pC.purify(), pD.purify(), pE.purify()
+        ));
     }
 
-    public static <A,B,C,D,E,F> Parser6<A,B,C,D,E,F> seq(
+    public static <A,B,C,D,E,F> PooledParser<Tuple6<A,B,C,D,E,F>> seq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE, Parser<F> pF
     ) {
-        Ref<Tuple6<A,B,C,D,E,F>> artificialPool = new Ref<>();
-        Parser6<A,B,C,D,E,F> rawParser = rawSeq(pA, pB, pC, pD, pE, pF);
-        return (reader, pool) -> {
-            if (pool != null) return rawParser.run(reader, pool);
-            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
-            else return artificialPool.val = rawParser.run(reader);
-        };
+        return PooledParser.from(rawSeq(
+            pA.purify(), pB.purify(), pC.purify(),
+            pD.purify(), pE.purify(), pF.purify()
+        ));
     }
 
-    public static <A,B,C,D,E,F,G> Parser7<A,B,C,D,E,F,G> seq(
+    public static <A,B,C,D,E,F,G> PooledParser<Tuple7<A,B,C,D,E,F,G>> seq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE, Parser<F> pF, Parser<G> pG
     ) {
-        Ref<Tuple7<A,B,C,D,E,F,G>> artificialPool = new Ref<>();
-        Parser7<A,B,C,D,E,F,G> rawParser = rawSeq(pA, pB, pC, pD, pE, pF, pG);
-        return (reader, pool) -> {
-            if (pool != null) return rawParser.run(reader, pool);
-            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
-            else return artificialPool.val = rawParser.run(reader);
-        };
+        return PooledParser.from(rawSeq(
+            pA.purify(), pB.purify(), pC.purify(), pD.purify(),
+            pE.purify(), pF.purify(), pG.purify()
+        ));
     }
 
-    public static <A,B,C,D,E,F,G,H> Parser8<A,B,C,D,E,F,G,H> seq(
+    public static <A,B,C,D,E,F,G,H> PooledParser<Tuple8<A,B,C,D,E,F,G,H>> seq(
             Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
             Parser<E> pE, Parser<F> pF, Parser<G> pG, Parser<H> pH
     ) {
-        Ref<Tuple8<A,B,C,D,E,F,G,H>> artificialPool = new Ref<>();
-        Parser8<A,B,C,D,E,F,G,H> rawParser = rawSeq(pA, pB, pC, pD, pE, pF, pG, pH);
-        return (reader, pool) -> {
-            if (pool != null) return rawParser.run(reader, pool);
-            if (artificialPool.val != null) return rawParser.run(reader, artificialPool.val);
-            else return artificialPool.val = rawParser.run(reader);
-        };
+        return PooledParser.from(rawSeq(
+            pA.purify(), pB.purify(), pC.purify(), pD.purify(),
+            pE.purify(), pF.purify(), pG.purify(), pH.purify()
+        ));
     }
 
     //-------------------------------------------------------------------------------------------//
 
-    public static <X> Parser1<X> open(QName name, Parser<X> p) {
+    public static <X> Parser<X> open(QName name, Parser<X> p) {
         return opens(name).nextR(p).nextL(step);
     }
 
-    public static <X> Parser1<X> open(String name, Parser<X> p) {
+    public static <X> Parser<X> open(String name, Parser<X> p) {
         return open(new QName(name), p);
     }
 
-    public static <X> Parser1<X> elem(QName name, Parser<X> p) {
+    public static <X> Parser<X> elem(QName name, Parser<X> p) {
         return opens(name).nextR(p).nextL(step).nextL(close(name));
     }
 
-    public static <X> Parser1<X> elem(String name, Parser<X> p) {
+    public static <X> Parser<X> elem(String name, Parser<X> p) {
         return elem(new QName(name), p);
     }
 
-    public static Parser1<String> elemAttr(QName elemName, QName attrName) {
+    public static Parser<String> elemAttr(QName elemName, QName attrName) {
         return opens(elemName).nextR(attr(attrName)).nextL(step).nextL(close(elemName));
     }
 
-    public static Parser1<String> elemAttr(String elemName, String attrName) {
+    public static Parser<String> elemAttr(String elemName, String attrName) {
         return elemAttr(new QName(elemName), new QName(attrName));
     }
 
-    public static Parser1<Map<QName, String>> elemAttrs(QName name) {
+    public static Parser<Map<QName, String>> elemAttrs(QName name) {
         return opens(name).nextR(attrs).nextL(step).nextL(close(name));
     }
 
-    public static Parser1<Map<QName, String>> elemAttrs(String name) {
+    public static Parser<Map<QName, String>> elemAttrs(String name) {
         return elemAttrs(new QName(name));
     }
 
-    public static Parser1<String> elemText(QName name) {
+    public static Parser<String> elemText(QName name) {
         return open(name).nextR(text).nextL(close(name));
     }
 
-    public static Parser1<String> elemText(String name) {
+    public static Parser<String> elemText(String name) {
         return elemText(new QName(name));
     }
 
-    public static Parser2<String,String> elemAttrAndText(QName elemName, QName attrName) {
+    public static Parser<Tuple2<String,String>> elemAttrAndText(QName elemName, QName attrName) {
         return within(elemName, attr(attrName), text);
     }
 
-    public static Parser2<String,String> elemAttrAndText(String elemName, String attrName) {
+    public static Parser<Tuple2<String,String>> elemAttrAndText(String elemName, String attrName) {
         return elemAttrAndText(new QName(elemName), new QName(attrName));
     }
 
-    public static Parser2<Map<QName,String>,String> elemAttrsAndText(QName name) {
+    public static Parser<Tuple2<Map<QName,String>,String>> elemAttrsAndText(QName name) {
         return within(name, attrs, text);
     }
 
-    public static Parser2<Map<QName,String>,String> elemAttrsAndText(String name) {
+    public static Parser<Tuple2<Map<QName,String>,String>> elemAttrsAndText(String name) {
         return elemAttrsAndText(new QName(name));
     }
 
     //-------------------------------------------------------------------------------------------//
 
-    public static <X> Parser1<X> within(QName name, Parser<X> p) {
+    public static <X> Parser<X> within(QName name, Parser<X> p) {
         return open(name, p).nextL(close(name))::run;
     }
 
-    public static <X> Parser1<X> within(String name, Parser<X> p) {
+    public static <X> Parser<X> within(String name, Parser<X> p) {
         return within(new QName(name), p);
     }
 
-    public static <T,A> Parser2<T,A> within(QName name, Parser<T> t, Parser<A> pA) {
+    public static <T,A> Parser<Tuple2<T,A>> within(QName name, Parser<T> t, Parser<A> pA) {
         return seq(open(name, t), pA).nextL(close(name));
     }
 
-    public static <T,A,B> Parser3<T,A,B> within(QName name,
+    public static <T,A,B> Parser<Tuple3<T,A,B>> within(QName name,
         Parser<T> t, Parser<A> pA, Parser<B> pB
     ) {
         return seq(open(name, t), pA, pB).nextL(close(name));
     }
 
-    public static <T,A,B,C> Parser4<T,A,B,C> within(QName name,
+    public static <T,A,B,C> Parser<Tuple4<T,A,B,C>> within(QName name,
         Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC
     ) {
         return seq(open(name, t), pA, pB, pC).nextL(close(name));
     }
 
-    public static <T,A,B,C,D> Parser5<T,A,B,C,D> within(QName name,
+    public static <T,A,B,C,D> Parser<Tuple5<T,A,B,C,D>> within(QName name,
         Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
         Parser<D> pD
     ) {
         return seq(open(name, t), pA, pB, pC, pD).nextL(close(name));
     }
 
-    public static <T,A,B,C,D,E> Parser6<T,A,B,C,D,E> within(QName name,
+    public static <T,A,B,C,D,E> Parser<Tuple6<T,A,B,C,D,E>> within(QName name,
         Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
         Parser<D> pD, Parser<E> pE
     ) {
         return seq(open(name, t), pA, pB, pC, pD, pE).nextL(close(name));
     }
 
-    public static <T,A,B,C,D,E,F> Parser7<T,A,B,C,D,E,F> within(QName name,
+    public static <T,A,B,C,D,E,F> Parser<Tuple7<T,A,B,C,D,E,F>> within(QName name,
         Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
         Parser<D> pD, Parser<E> pE, Parser<F> pF
     ) {
         return seq(open(name, t), pA, pB, pC, pD, pE, pF).nextL(close(name));
     }
 
-    public static <T,A,B,C,D,E,F,G> Parser8<T,A,B,C,D,E,F,G> within(QName name,
+    public static <T,A,B,C,D,E,F,G> Parser<Tuple8<T,A,B,C,D,E,F,G>> within(QName name,
         Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
         Parser<D> pD, Parser<E> pE, Parser<F> pF, Parser<G> pG
     ) {
         return seq(open(name, t), pA, pB, pC, pD, pE, pF, pG).nextL(close(name));
     }
 
-    public static <T,A> Parser2<T,A> within(String name,
+    public static <T,A> Parser<Tuple2<T,A>> within(String name,
         Parser<T> t, Parser<A> pA
     ) {
         return within(new QName(name), t, pA);
     }
 
-    public static <T,A,B> Parser3<T,A,B> within(String name,
+    public static <T,A,B> Parser<Tuple3<T,A,B>> within(String name,
         Parser<T> t, Parser<A> pA, Parser<B> pB
     ) {
         return within(new QName(name), t, pA, pB);
     }
 
-    public static <T,A,B,C> Parser4<T,A,B,C> within(String name,
+    public static <T,A,B,C> Parser<Tuple4<T,A,B,C>> within(String name,
         Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC
     ) {
         return within(new QName(name), t, pA, pB, pC);
     }
 
-    public static <T,A,B,C,D> Parser5<T,A,B,C,D> within(String name,
+    public static <T,A,B,C,D> Parser<Tuple5<T,A,B,C,D>> within(String name,
         Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
         Parser<D> pD
     ) {
         return within(new QName(name), t, pA, pB, pC, pD);
     }
 
-    public static <T,A,B,C,D,E> Parser6<T,A,B,C,D,E> within(String name,
+    public static <T,A,B,C,D,E> Parser<Tuple6<T,A,B,C,D,E>> within(String name,
         Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
         Parser<D> pD, Parser<E> pE
     ) {
         return within(new QName(name), t, pA, pB, pC, pD, pE);
     }
 
-    public static <T,A,B,C,D,E,F> Parser7<T,A,B,C,D,E,F> within(String name,
+    public static <T,A,B,C,D,E,F> Parser<Tuple7<T,A,B,C,D,E,F>> within(String name,
         Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
         Parser<D> pD, Parser<E> pE, Parser<F> pF
     ) {
         return within(new QName(name), t, pA, pB, pC, pD, pE, pF);
     }
 
-    public static <T,A,B,C,D,E,F,G> Parser8<T,A,B,C,D,E,F,G> within(String name,
+    public static <T,A,B,C,D,E,F,G> Parser<Tuple8<T,A,B,C,D,E,F,G>> within(String name,
         Parser<T> t, Parser<A> pA, Parser<B> pB, Parser<C> pC,
         Parser<D> pD, Parser<E> pE, Parser<F> pF, Parser<G> pG
     ) {
@@ -614,53 +586,43 @@ public final class HAX {
 
     //-------------------------------------------------------------------------------------------//
 
-    public static <X> Parser1<List<X>> manyWithin(QName name, Parser<X> p) {
-        return open(name).nextR(p.until(tryClose(name)));
+    public static <X> PooledParser<List<X>> manyWithin(QName name, Parser<X> bodyParser) {
+        return open(name).nextR(bodyParser.until(tryClose(name)));
     }
 
-    public static <X> Parser1<List<X>> manyWithin(String name, Parser<X> p) {
-        return manyWithin(new QName(name), p);
+    public static <X> PooledParser<List<X>> manyWithin(String name, Parser<X> bodyParser) {
+        return manyWithin(new QName(name), bodyParser);
     }
 
-    public static <X,Y> Parser2<X,List<Y>> manyWithin(QName name, Parser<X> t, Parser<Y> p) {
-        return seq(opens(name).nextR(t).nextL(step), p.until(tryClose(name)));
+    public static <X,Y> PooledParser<Tuple2<X,List<Y>>> manyWithin(
+            QName name, Parser<X> targetParser, Parser<Y> bodyParser
+    ) {
+        return seq(opens(name).nextR(targetParser).nextL(step), bodyParser.until(tryClose(name)));
     }
 
-    public static <X,Y> Parser2<X,List<Y>> manyWithin(String name, Parser<X> t, Parser<Y> p) {
-        return manyWithin(new QName(name), t, p);
+    public static <X,Y> PooledParser<Tuple2<X,List<Y>>> manyWithin(
+            String name, Parser<X> targetParser, Parser<Y> bodyParser
+    ) {
+        return manyWithin(new QName(name), targetParser, bodyParser);
     }
 
-    public static <X> Parser<Stream<X>> streamManyWithin(QName name, Parser<X> p) {
-        return open(name).nextR(p.streamUntil(tryClose(name)));
-    }
-
-    public static <X> Parser<Stream<X>> streamManyWithin(String name, Parser<X> p) {
-        return streamManyWithin(new QName(name), p);
-    }
-
-    public static <X,Y> Parser<Tuple2<X,Stream<Y>>> streamManyWithin(QName name, Parser<X> t, Parser<Y> p) {
-        return seq(opens(name).nextR(t).nextL(step), p.streamUntil(tryClose(name)));
-    }
-
-    public static <X,Y> Parser<Tuple2<X,Stream<Y>>> streamManyWithin(String name, Parser<X> t, Parser<Y> p) {
-        return streamManyWithin(new QName(name), t, p);
-    }
-
-    public static <B> Parser<?> evalManyWithin(QName name, Parser<?> bodyParser) {
+    public static Parser<?> evalManyWithin(QName name, Parser<?> bodyParser) {
         return open(name).nextL(bodyParser.until_(tryClose(name)));
     }
 
-    public static Parser<?> evalManyWithin(String name, Parser<?> p) {
-        return evalManyWithin(new QName(name), p);
+    public static Parser<?> evalManyWithin(String name, Parser<?> bodyParser) {
+        return evalManyWithin(new QName(name), bodyParser);
     }
 
     public static <T> Parser<T> evalManyWithin(
-        QName name, Parser<T> targetParser, Parser<?> bodyParser
+            QName name, Parser<T> targetParser, Parser<?> bodyParser
     ) {
         return opens(name).nextR(targetParser).nextL(step).nextL(bodyParser.until_(tryClose(name)));
     }
 
-    public static <X> Parser<X> evalManyWithin(String name, Parser<X> t, Parser<?> p) {
-        return evalManyWithin(new QName(name), t, p);
+    public static <T> Parser<T> evalManyWithin(
+            String name, Parser<T> targetParser, Parser<?> bodyParser
+    ) {
+        return evalManyWithin(new QName(name), targetParser, bodyParser);
     }
 }

@@ -1,4 +1,4 @@
-package com.github.apsk.hax.parser;
+package com.github.apsk.hax;
 
 import javax.xml.stream.XMLStreamException;
 
