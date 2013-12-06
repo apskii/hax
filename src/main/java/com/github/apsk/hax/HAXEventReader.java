@@ -1,7 +1,5 @@
 package com.github.apsk.hax;
 
-import com.github.apsk.hax.HAX;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -20,9 +18,6 @@ public final class HAXEventReader {
     }
     public XMLEvent cur() {
         return current;
-    }
-    public XMLEvent peek() throws XMLStreamException {
-        return reader.peek();
     }
     public XMLEvent next() throws XMLStreamException {
         current = reader.nextEvent();

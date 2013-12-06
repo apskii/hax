@@ -3,6 +3,7 @@ package com.github.apsk.hax;
 import com.github.apsk.j8t.*;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.XMLEvent;
 import java.util.HashMap;
@@ -586,21 +587,21 @@ public final class HAX {
 
     //-------------------------------------------------------------------------------------------//
 
-    public static <X> PooledParser<List<X>> manyWithin(QName name, Parser<X> bodyParser) {
+    public static <X> Parser<List<X>> manyWithin(QName name, Parser<X> bodyParser) {
         return open(name).nextR(bodyParser.until(tryClose(name)));
     }
 
-    public static <X> PooledParser<List<X>> manyWithin(String name, Parser<X> bodyParser) {
+    public static <X> Parser<List<X>> manyWithin(String name, Parser<X> bodyParser) {
         return manyWithin(new QName(name), bodyParser);
     }
 
-    public static <X,Y> PooledParser<Tuple2<X,List<Y>>> manyWithin(
+    public static <X,Y> Parser<Tuple2<X,List<Y>>> manyWithin(
             QName name, Parser<X> targetParser, Parser<Y> bodyParser
     ) {
         return seq(opens(name).nextR(targetParser).nextL(step), bodyParser.until(tryClose(name)));
     }
 
-    public static <X,Y> PooledParser<Tuple2<X,List<Y>>> manyWithin(
+    public static <X,Y> Parser<Tuple2<X,List<Y>>> manyWithin(
             String name, Parser<X> targetParser, Parser<Y> bodyParser
     ) {
         return manyWithin(new QName(name), targetParser, bodyParser);
