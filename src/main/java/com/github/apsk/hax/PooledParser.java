@@ -1,6 +1,7 @@
 package com.github.apsk.hax;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.util.List;
 
 public final class PooledParser<R> implements Parser<R> {
@@ -10,7 +11,7 @@ public final class PooledParser<R> implements Parser<R> {
         this.parser = parser;
     }
     @Override
-    public R run(HAXEventReader reader, R pool) throws XMLStreamException {
+    public R run(XMLStreamReader reader, R pool) throws XMLStreamException {
         if (pool != null) {
             return parser.run(reader, pool);
         }

@@ -1,6 +1,8 @@
 package com.github.apsk.hax;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -31,10 +33,10 @@ public class OpsParserTest {
                 Integer.parseInt(r.$2),
                 Integer.parseInt(r.$3)
             ));
-        HAXEventReader reader = new HAXEventReader(
+        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(
             getClass().getClassLoader().getResourceAsStream("ops.xml")
         );
-        reader.skipTo("ops");
+        skipTo("ops").run(reader);
         manyWithin("ops", attr("class"), op)
             .run(reader)
             .unpack((cls, ops) -> {

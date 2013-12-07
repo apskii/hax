@@ -1,6 +1,7 @@
 package com.github.apsk.hax;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -8,9 +9,9 @@ import java.util.function.Function;
 
 @FunctionalInterface
 public interface Parser<R> {
-    R run(HAXEventReader eventReader, R pool) throws XMLStreamException;
-    default R run(HAXEventReader eventReader) throws XMLStreamException {
-        return this.run(eventReader, null);
+    R run(XMLStreamReader reader, R pool) throws XMLStreamException;
+    default R run(XMLStreamReader reader) throws XMLStreamException {
+        return this.run(reader, null);
     }
     default <X> Parser<X> map(Function<R,X> f) {
         return (reader, _pool) -> f.apply(this.run(reader));
