@@ -258,216 +258,222 @@ public final class HAX {
 
     //-------------------------------------------------------------------------------------------//
 
-    public static <A,B> Parser<Tuple2<A,B>> rawSeq(Parser<A> pA, Parser<B> pB) {
+    public static <A,B> Parser<Tuple2<A,B>> rawSeq(Parser<A> bodyParserA, Parser<B> bodyParserB) {
         return (reader, pool) -> {
             if (pool == null) {
                 return new Tuple2<>(
-                    pA.run(reader),
-                    pB.run(reader)
+                    bodyParserA.run(reader),
+                    bodyParserB.run(reader)
                 );
             }
-            pool.$1 = pA.run(reader, pool.$1);
-            pool.$2 = pB.run(reader, pool.$2);
+            pool.$1 = bodyParserA.run(reader, pool.$1);
+            pool.$2 = bodyParserB.run(reader, pool.$2);
             return pool;
         };
     }
 
-    public static <A,B,C> Parser<Tuple3<A,B,C>> rawSeq(Parser<A> pA, Parser<B> pB, Parser<C> pC) {
+    public static <A,B,C> Parser<Tuple3<A,B,C>> rawSeq(Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC) {
         return (reader, pool) -> {
             if (pool == null) {
                 return new Tuple3<>(
-                    pA.run(reader),
-                    pB.run(reader),
-                    pC.run(reader)
+                    bodyParserA.run(reader),
+                    bodyParserB.run(reader),
+                    bodyParserC.run(reader)
                 );
             }
-            pool.$1 = pA.run(reader, pool.$1);
-            pool.$2 = pB.run(reader, pool.$2);
-            pool.$3 = pC.run(reader, pool.$3);
+            pool.$1 = bodyParserA.run(reader, pool.$1);
+            pool.$2 = bodyParserB.run(reader, pool.$2);
+            pool.$3 = bodyParserC.run(reader, pool.$3);
             return pool;
         };
     }
 
     public static <A,B,C,D> Parser<Tuple4<A,B,C,D>> rawSeq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD
+        Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD
     ) {
         return (reader, pool) -> {
             if (pool == null) {
                 return new Tuple4<>(
-                    pA.run(reader),
-                    pB.run(reader),
-                    pC.run(reader),
-                    pD.run(reader)
+                    bodyParserA.run(reader),
+                    bodyParserB.run(reader),
+                    bodyParserC.run(reader),
+                    bodyParserD.run(reader)
                 );
             }
-            pool.$1 = pA.run(reader, pool.$1);
-            pool.$2 = pB.run(reader, pool.$2);
-            pool.$3 = pC.run(reader, pool.$3);
-            pool.$4 = pD.run(reader, pool.$4);
+            pool.$1 = bodyParserA.run(reader, pool.$1);
+            pool.$2 = bodyParserB.run(reader, pool.$2);
+            pool.$3 = bodyParserC.run(reader, pool.$3);
+            pool.$4 = bodyParserD.run(reader, pool.$4);
             return pool;
         };
     }
 
     public static <A,B,C,D,E> Parser<Tuple5<A,B,C,D,E>> rawSeq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
-        Parser<E> pE
+        Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
+        Parser<E> bodyParserE
     ) {
         return (reader, pool) -> {
             if (pool == null) {
                 return new Tuple5<>(
-                    pA.run(reader),
-                    pB.run(reader),
-                    pC.run(reader),
-                    pD.run(reader),
-                    pE.run(reader)
+                    bodyParserA.run(reader),
+                    bodyParserB.run(reader),
+                    bodyParserC.run(reader),
+                    bodyParserD.run(reader),
+                    bodyParserE.run(reader)
                 );
             }
-            pool.$1 = pA.run(reader, pool.$1);
-            pool.$2 = pB.run(reader, pool.$2);
-            pool.$3 = pC.run(reader, pool.$3);
-            pool.$4 = pD.run(reader, pool.$4);
-            pool.$5 = pE.run(reader, pool.$5);
+            pool.$1 = bodyParserA.run(reader, pool.$1);
+            pool.$2 = bodyParserB.run(reader, pool.$2);
+            pool.$3 = bodyParserC.run(reader, pool.$3);
+            pool.$4 = bodyParserD.run(reader, pool.$4);
+            pool.$5 = bodyParserE.run(reader, pool.$5);
             return pool;
         };
     }
 
     public static <A,B,C,D,E,F> Parser<Tuple6<A,B,C,D,E,F>> rawSeq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
-        Parser<E> pE, Parser<F> pF
+        Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
+        Parser<E> bodyParserE, Parser<F> bodyParserF
     ) {
         return (reader, pool) -> {
             if (pool == null) {
                 return new Tuple6<>(
-                    pA.run(reader),
-                    pB.run(reader),
-                    pC.run(reader),
-                    pD.run(reader),
-                    pE.run(reader),
-                    pF.run(reader)
+                    bodyParserA.run(reader),
+                    bodyParserB.run(reader),
+                    bodyParserC.run(reader),
+                    bodyParserD.run(reader),
+                    bodyParserE.run(reader),
+                    bodyParserF.run(reader)
                 );
             }
-            pool.$1 = pA.run(reader, pool.$1);
-            pool.$2 = pB.run(reader, pool.$2);
-            pool.$3 = pC.run(reader, pool.$3);
-            pool.$4 = pD.run(reader, pool.$4);
-            pool.$5 = pE.run(reader, pool.$5);
-            pool.$6 = pF.run(reader, pool.$6);
+            pool.$1 = bodyParserA.run(reader, pool.$1);
+            pool.$2 = bodyParserB.run(reader, pool.$2);
+            pool.$3 = bodyParserC.run(reader, pool.$3);
+            pool.$4 = bodyParserD.run(reader, pool.$4);
+            pool.$5 = bodyParserE.run(reader, pool.$5);
+            pool.$6 = bodyParserF.run(reader, pool.$6);
             return pool;
         };
     }
 
     public static <A,B,C,D,E,F,G> Parser<Tuple7<A,B,C,D,E,F,G>> rawSeq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
-        Parser<E> pE, Parser<F> pF, Parser<G> pG
+        Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
+        Parser<E> bodyParserE, Parser<F> bodyParserF, Parser<G> bodyParserG
     ) {
         return (reader, pool) -> {
             if (pool == null) {
                 return new Tuple7<>(
-                    pA.run(reader),
-                    pB.run(reader),
-                    pC.run(reader),
-                    pD.run(reader),
-                    pE.run(reader),
-                    pF.run(reader),
-                    pG.run(reader)
+                    bodyParserA.run(reader),
+                    bodyParserB.run(reader),
+                    bodyParserC.run(reader),
+                    bodyParserD.run(reader),
+                    bodyParserE.run(reader),
+                    bodyParserF.run(reader),
+                    bodyParserG.run(reader)
                 );
             }
-            pool.$1 = pA.run(reader, pool.$1);
-            pool.$2 = pB.run(reader, pool.$2);
-            pool.$3 = pC.run(reader, pool.$3);
-            pool.$4 = pD.run(reader, pool.$4);
-            pool.$5 = pE.run(reader, pool.$5);
-            pool.$6 = pF.run(reader, pool.$6);
-            pool.$7 = pG.run(reader, pool.$7);
+            pool.$1 = bodyParserA.run(reader, pool.$1);
+            pool.$2 = bodyParserB.run(reader, pool.$2);
+            pool.$3 = bodyParserC.run(reader, pool.$3);
+            pool.$4 = bodyParserD.run(reader, pool.$4);
+            pool.$5 = bodyParserE.run(reader, pool.$5);
+            pool.$6 = bodyParserF.run(reader, pool.$6);
+            pool.$7 = bodyParserG.run(reader, pool.$7);
             return pool;
         };
     }
 
     public static <A,B,C,D,E,F,G,H> Parser<Tuple8<A,B,C,D,E,F,G,H>> rawSeq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
-        Parser<E> pE, Parser<F> pF, Parser<G> pG, Parser<H> pH
+            Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC,
+            Parser<D> bodyParserD, Parser<E> bodyParserE, Parser<F> bodyParserF,
+            Parser<G> bodyParserG, Parser<H> bodyParserH
     ) {
         return (reader, pool) -> {
             if (pool == null) {
                 return new Tuple8<>(
-                    pA.run(reader),
-                    pB.run(reader),
-                    pC.run(reader),
-                    pD.run(reader),
-                    pE.run(reader),
-                    pF.run(reader),
-                    pG.run(reader),
-                    pH.run(reader)
+                    bodyParserA.run(reader),
+                    bodyParserB.run(reader),
+                    bodyParserC.run(reader),
+                    bodyParserD.run(reader),
+                    bodyParserE.run(reader),
+                    bodyParserF.run(reader),
+                    bodyParserG.run(reader),
+                    bodyParserH.run(reader)
                 );
             }
-            pool.$1 = pA.run(reader, pool.$1);
-            pool.$2 = pB.run(reader, pool.$2);
-            pool.$3 = pC.run(reader, pool.$3);
-            pool.$4 = pD.run(reader, pool.$4);
-            pool.$5 = pE.run(reader, pool.$5);
-            pool.$6 = pF.run(reader, pool.$6);
-            pool.$7 = pG.run(reader, pool.$7);
-            pool.$8 = pH.run(reader, pool.$8);
+            pool.$1 = bodyParserA.run(reader, pool.$1);
+            pool.$2 = bodyParserB.run(reader, pool.$2);
+            pool.$3 = bodyParserC.run(reader, pool.$3);
+            pool.$4 = bodyParserD.run(reader, pool.$4);
+            pool.$5 = bodyParserE.run(reader, pool.$5);
+            pool.$6 = bodyParserF.run(reader, pool.$6);
+            pool.$7 = bodyParserG.run(reader, pool.$7);
+            pool.$8 = bodyParserH.run(reader, pool.$8);
             return pool;
         };
     }
 
-    public static <A,B> PooledParser<Tuple2<A,B>> seq(Parser<A> pA, Parser<B> pB) {
+    public static <A,B> PooledParser<Tuple2<A,B>> seq(
+            Parser<A> bodyParserA, Parser<B> bodyParserB
+    ) {
         return PooledParser.from(rawSeq(
-            pA.purify(), pB.purify()
+            bodyParserA.purify(), bodyParserB.purify()
         ));
     }
 
-    public static <A,B,C> PooledParser<Tuple3<A,B,C>> seq(Parser<A> pA, Parser<B> pB, Parser<C> pC) {
+    public static <A,B,C> PooledParser<Tuple3<A,B,C>> seq(
+            Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC
+    ) {
         return PooledParser.from(rawSeq(
-            pA.purify(), pB.purify(), pC.purify()
+            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify()
         ));
     }
 
     public static <A,B,C,D> PooledParser<Tuple4<A,B,C,D>> seq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD
+            Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD
     ) {
         return PooledParser.from(rawSeq(
-            pA.purify(), pB.purify(), pC.purify(), pD.purify()
+            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(), bodyParserD.purify()
         ));
     }
 
     public static <A,B,C,D,E> PooledParser<Tuple5<A,B,C,D,E>> seq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
-        Parser<E> pE
+            Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
+            Parser<E> bodyParserE
     ) {
         return PooledParser.from(rawSeq(
-            pA.purify(), pB.purify(), pC.purify(), pD.purify(), pE.purify()
+            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(),
+            bodyParserD.purify(), bodyParserE.purify()
         ));
     }
 
     public static <A,B,C,D,E,F> PooledParser<Tuple6<A,B,C,D,E,F>> seq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
-        Parser<E> pE, Parser<F> pF
+            Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
+            Parser<E> bodyParserE, Parser<F> bodyParserF
     ) {
         return PooledParser.from(rawSeq(
-            pA.purify(), pB.purify(), pC.purify(),
-            pD.purify(), pE.purify(), pF.purify()
+            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(),
+            bodyParserD.purify(), bodyParserE.purify(), bodyParserF.purify()
         ));
     }
 
     public static <A,B,C,D,E,F,G> PooledParser<Tuple7<A,B,C,D,E,F,G>> seq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
-        Parser<E> pE, Parser<F> pF, Parser<G> pG
+        Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
+        Parser<E> bodyParserE, Parser<F> bodyParserF, Parser<G> bodyParserG
     ) {
         return PooledParser.from(rawSeq(
-            pA.purify(), pB.purify(), pC.purify(), pD.purify(),
-            pE.purify(), pF.purify(), pG.purify()
+            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(), bodyParserD.purify(),
+            bodyParserE.purify(), bodyParserF.purify(), bodyParserG.purify()
         ));
     }
 
     public static <A,B,C,D,E,F,G,H> PooledParser<Tuple8<A,B,C,D,E,F,G,H>> seq(
-        Parser<A> pA, Parser<B> pB, Parser<C> pC, Parser<D> pD,
-        Parser<E> pE, Parser<F> pF, Parser<G> pG, Parser<H> pH
+        Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
+        Parser<E> bodyParserE, Parser<F> bodyParserF, Parser<G> bodyParserG, Parser<H> bodyParserH
     ) {
         return PooledParser.from(rawSeq(
-            pA.purify(), pB.purify(), pC.purify(), pD.purify(),
-            pE.purify(), pF.purify(), pG.purify(), pH.purify()
+            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(), bodyParserD.purify(),
+            bodyParserE.purify(), bodyParserF.purify(), bodyParserG.purify(), bodyParserH.purify()
         ));
     }
 
@@ -497,162 +503,660 @@ public final class HAX {
         return opens(elemName).nextR(attr(attrName)).nextL(step).nextL(close(elemName));
     }
 
+    /**
+     * Constructs a parser, which, for an element with given elemName,
+     * reads and returns the text inside this element.
+     *
+     * @param name Element's name (qualified)
+     */
     public static Parser<String> elemText(QName name) {
         return open(name).nextR(text).nextL(close(name));
     }
 
+    /**
+     * Constructs a parser, which, for an element with given elemName,
+     * reads and returns the text inside this element.
+     *
+     * @param name Element's name (unqualified)
+     */
     public static Parser<String> elemText(String name) {
         return open(name).nextR(text).nextL(close(name));
     }
 
+    /**
+     * Constructs a parser, which, for an element with given elemName,
+     * reads an attribute attrName and text inside the element, and returns them as a tuple.
+     *
+     * @param elemName Element's name (qualified)
+     * @param attrName Attribute's name (qualified)
+     */
     public static Parser<Tuple2<String,String>> elemAttrAndText(QName elemName, QName attrName) {
         return within(elemName, attr(attrName), text);
     }
 
+    /**
+     * Constructs a parser, which, for an element with given elemName,
+     * reads an attribute attrName and text inside the element, and returns them as a tuple.
+     *
+     * @param elemName Element's name (unqualified)
+     * @param attrName Attribute's name (unqualified)
+     */
     public static Parser<Tuple2<String,String>> elemAttrAndText(String elemName, String attrName) {
         return within(elemName, attr(attrName), text);
     }
 
-    //-------------------------------------------------------------------------------------------//
-
-    public static <A> Parser<A> within(QName name, Parser<A> bodyParser) {
+    /**
+     * Constructs a parser, which executes bodyParser inside the element with given name,
+     * and returns the result of its execution.
+     *
+     * @param name Element's name (qualified)
+     * @param bodyParser Parser to run inside the element
+     * @param <B> Type of bodyParser's result
+     */
+    public static <B> Parser<B> within(QName name, Parser<B> bodyParser) {
         return open(name).nextR(bodyParser).nextL(close(name));
     }
 
-    public static <A> Parser<A> within(String name, Parser<A> bodyParser) {
+    /**
+     * Constructs a parser, which executes bodyParser inside the element with given name,
+     * and returns the result of its execution.
+     *
+     * @param name Element's name (unqualified)
+     * @param bodyParser Parser to run inside the element
+     * @param <B> Type of bodyParser's result
+     */
+    public static <B> Parser<B> within(String name, Parser<B> bodyParser) {
         return open(name).nextR(bodyParser).nextL(close(name));
     }
 
-    public static <T,A> Parser<Tuple2<T,A>> within(QName name, Parser<T> pT, Parser<A> pA) {
-        return seq(open(name, pT), pA).nextL(close(name));
-    }
-
-    public static <T,A,B> Parser<Tuple3<T,A,B>> within(QName name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParser inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (qualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParser Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <B> Type of bodyParser's result
+     */
+    public static <T,B> Parser<Tuple2<T,B>> within(
+            QName name,
+            Parser<T> targetParser,
+            Parser<B> bodyParser
     ) {
-        return seq(open(name, pT), pA, pB).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParser)
+            .nextL(close(name));
     }
 
-    public static <T,A,B,C> Parser<Tuple4<T,A,B,C>> within(QName name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB, Parser<C> pC
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA and bodyParserB one after another inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (qualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     */
+    public static <T,A,B> Parser<Tuple3<T,A,B>> within(
+            QName name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB
     ) {
-        return seq(open(name, pT), pA, pB, pC).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB)
+            .nextL(close(name));
     }
 
-    public static <T,A,B,C,D> Parser<Tuple5<T,A,B,C,D>> within(QName name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB, Parser<C> pC,
-        Parser<D> pD
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA, bodyParserB, and bodyParserC one after another inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (qualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param bodyParserC third Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     * @param <C> Type of bodyParserC's result
+     */
+    public static <T,A,B,C> Parser<Tuple4<T,A,B,C>> within(
+            QName name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB,
+            Parser<C> bodyParserC
     ) {
-        return seq(open(name, pT), pA, pB, pC, pD).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB,
+                bodyParserC)
+            .nextL(close(name));
     }
 
-    public static <T,A,B,C,D,E> Parser<Tuple6<T,A,B,C,D,E>> within(QName name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB, Parser<C> pC,
-        Parser<D> pD, Parser<E> pE
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA, bodyParserB, bodyParserC,
+     * and bodyParserD one after another inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (qualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param bodyParserC third Parser to run inside the element
+     * @param bodyParserD fourth Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     * @param <C> Type of bodyParserC's result
+     * @param <D> Type of bodyParserD's result
+     */
+    public static <T,A,B,C,D> Parser<Tuple5<T,A,B,C,D>> within(
+            QName name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB,
+            Parser<C> bodyParserC,
+            Parser<D> bodyParserD
     ) {
-        return seq(open(name, pT), pA, pB, pC, pD, pE).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB,
+                bodyParserC,
+                bodyParserD)
+            .nextL(close(name));
     }
 
-    public static <T,A,B,C,D,E,F> Parser<Tuple7<T,A,B,C,D,E,F>> within(QName name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB, Parser<C> pC,
-        Parser<D> pD, Parser<E> pE, Parser<F> pF
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD,
+     * and bodyParserE one after another inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (qualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param bodyParserC third Parser to run inside the element
+     * @param bodyParserD fourth Parser to run inside the element
+     * @param bodyParserE fifth Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     * @param <C> Type of bodyParserC's result
+     * @param <D> Type of bodyParserD's result
+     * @param <E> Type of bodyParserE's result
+     */
+    public static <T,A,B,C,D,E> Parser<Tuple6<T,A,B,C,D,E>> within(
+            QName name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB,
+            Parser<C> bodyParserC,
+            Parser<D> bodyParserD,
+            Parser<E> bodyParserE
     ) {
-        return seq(open(name, pT), pA, pB, pC, pD, pE, pF).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB,
+                bodyParserC,
+                bodyParserD,
+                bodyParserE)
+            .nextL(close(name));
     }
 
-    public static <T,A,B,C,D,E,F,G> Parser<Tuple8<T,A,B,C,D,E,F,G>> within(QName name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB, Parser<C> pC,
-        Parser<D> pD, Parser<E> pE, Parser<F> pF, Parser<G> pG
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD, bodyParserE,
+     * and bodyParserF one after another inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (qualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param bodyParserC third Parser to run inside the element
+     * @param bodyParserD fourth Parser to run inside the element
+     * @param bodyParserE fifth Parser to run inside the element
+     * @param bodyParserF sixth Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     * @param <C> Type of bodyParserC's result
+     * @param <D> Type of bodyParserD's result
+     * @param <E> Type of bodyParserE's result
+     * @param <F> Type of bodyParserF's result
+     */
+    public static <T,A,B,C,D,E,F> Parser<Tuple7<T,A,B,C,D,E,F>> within(
+            QName name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB,
+            Parser<C> bodyParserC,
+            Parser<D> bodyParserD,
+            Parser<E> bodyParserE,
+            Parser<F> bodyParserF
     ) {
-        return seq(open(name, pT), pA, pB, pC, pD, pE, pF, pG).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB,
+                bodyParserC,
+                bodyParserD,
+                bodyParserE,
+                bodyParserF)
+            .nextL(close(name));
     }
 
-    //-------------------------------------------------------------------------------------------//
-
-    public static <T,A> Parser<Tuple2<T,A>> within(String name,
-       Parser<T> pT, Parser<A> pA
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD, bodyParserE, bodyParserF,
+     * and bodyParserG one after another inside the element, and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (qualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param bodyParserC third Parser to run inside the element
+     * @param bodyParserD fourth Parser to run inside the element
+     * @param bodyParserE fifth Parser to run inside the element
+     * @param bodyParserF sixth Parser to run inside the element
+     * @param bodyParserG seventh Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     * @param <C> Type of bodyParserC's result
+     * @param <D> Type of bodyParserD's result
+     * @param <E> Type of bodyParserE's result
+     * @param <F> Type of bodyParserF's result
+     * @param <G> Type of bodyParserG's result
+     */
+    public static <T,A,B,C,D,E,F,G> Parser<Tuple8<T,A,B,C,D,E,F,G>> within(
+            QName name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB,
+            Parser<C> bodyParserC,
+            Parser<D> bodyParserD,
+            Parser<E> bodyParserE,
+            Parser<F> bodyParserF,
+            Parser<G> bodyParserG
     ) {
-        return seq(open(name, pT), pA).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB,
+                bodyParserC,
+                bodyParserD,
+                bodyParserE,
+                bodyParserF,
+                bodyParserG)
+            .nextL(close(name));
     }
 
-    public static <T,A,B> Parser<Tuple3<T,A,B>> within(String name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParser inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (unqualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParser Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <B> Type of bodyParser's result
+     */
+    public static <T,B> Parser<Tuple2<T, B>> within(
+            String name,
+            Parser<T> targetParser,
+            Parser<B> bodyParser
     ) {
-        return seq(open(name, pT), pA, pB).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParser)
+            .nextL(close(name));
     }
 
-    public static <T,A,B,C> Parser<Tuple4<T,A,B,C>> within(String name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB, Parser<C> pC
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA and bodyParserB one after another inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (unqualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     */
+    public static <T,A,B> Parser<Tuple3<T,A,B>> within(
+            String name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB
     ) {
-        return seq(open(name, pT), pA, pB, pC).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB)
+            .nextL(close(name));
     }
 
-    public static <T,A,B,C,D> Parser<Tuple5<T,A,B,C,D>> within(String name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB, Parser<C> pC,
-        Parser<D> pD
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA, bodyParserB, and bodyParserC one after another inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (unqualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param bodyParserC third Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     * @param <C> Type of bodyParserC's result
+     */
+    public static <T,A,B,C> Parser<Tuple4<T,A,B,C>> within(
+            String name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB,
+            Parser<C> bodyParserC
     ) {
-        return seq(open(name, pT), pA, pB, pC, pD).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB,
+                bodyParserC)
+            .nextL(close(name));
     }
 
-    public static <T,A,B,C,D,E> Parser<Tuple6<T,A,B,C,D,E>> within(String name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB, Parser<C> pC,
-        Parser<D> pD, Parser<E> pE
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA, bodyParserB, bodyParserC,
+     * and bodyParserD one after another inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (unqualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param bodyParserC third Parser to run inside the element
+     * @param bodyParserD fourth Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     * @param <C> Type of bodyParserC's result
+     * @param <D> Type of bodyParserD's result
+     */
+    public static <T,A,B,C,D> Parser<Tuple5<T,A,B,C,D>> within(
+            String name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB,
+            Parser<C> bodyParserC,
+            Parser<D> bodyParserD
     ) {
-        return seq(open(name, pT), pA, pB, pC, pD, pE).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB,
+                bodyParserC,
+                bodyParserD)
+            .nextL(close(name));
     }
 
-    public static <T,A,B,C,D,E,F> Parser<Tuple7<T,A,B,C,D,E,F>> within(String name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB, Parser<C> pC,
-        Parser<D> pD, Parser<E> pE, Parser<F> pF
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD,
+     * and bodyParserE one after another inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (unqualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param bodyParserC third Parser to run inside the element
+     * @param bodyParserD fourth Parser to run inside the element
+     * @param bodyParserE fifth Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     * @param <C> Type of bodyParserC's result
+     * @param <D> Type of bodyParserD's result
+     * @param <E> Type of bodyParserE's result
+     */
+    public static <T,A,B,C,D,E> Parser<Tuple6<T,A,B,C,D,E>> within(
+            String name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB,
+            Parser<C> bodyParserC,
+            Parser<D> bodyParserD,
+            Parser<E> bodyParserE
     ) {
-        return seq(open(name, pT), pA, pB, pC, pD, pE, pF).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB,
+                bodyParserC,
+                bodyParserD,
+                bodyParserE)
+            .nextL(close(name));
     }
 
-    public static <T,A,B,C,D,E,F,G> Parser<Tuple8<T,A,B,C,D,E,F,G>> within(String name,
-        Parser<T> pT, Parser<A> pA, Parser<B> pB, Parser<C> pC,
-        Parser<D> pD, Parser<E> pE, Parser<F> pF, Parser<G> pG
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD, bodyParserE,
+     * and bodyParserF one after another inside the element,
+     * and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (unqualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param bodyParserC third Parser to run inside the element
+     * @param bodyParserD fourth Parser to run inside the element
+     * @param bodyParserE fifth Parser to run inside the element
+     * @param bodyParserF sixth Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     * @param <C> Type of bodyParserC's result
+     * @param <D> Type of bodyParserD's result
+     * @param <E> Type of bodyParserE's result
+     * @param <F> Type of bodyParserF's result
+     */
+    public static <T,A,B,C,D,E,F> Parser<Tuple7<T,A,B,C,D,E,F>> within(
+            String name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB,
+            Parser<C> bodyParserC,
+            Parser<D> bodyParserD,
+            Parser<E> bodyParserE,
+            Parser<F> bodyParserF
     ) {
-        return seq(open(name, pT), pA, pB, pC, pD, pE, pF, pG).nextL(close(name));
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB,
+                bodyParserC,
+                bodyParserD,
+                bodyParserE,
+                bodyParserF)
+            .nextL(close(name));
     }
 
-    //-------------------------------------------------------------------------------------------//
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name,
+     * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD, bodyParserE, bodyParserF,
+     * and bodyParserG one after another inside the element, and then returns corresponding results as a tuple.
+     *
+     * @param name Element's name (unqualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParserA first Parser to run inside the element
+     * @param bodyParserB second Parser to run inside the element
+     * @param bodyParserC third Parser to run inside the element
+     * @param bodyParserD fourth Parser to run inside the element
+     * @param bodyParserE fifth Parser to run inside the element
+     * @param bodyParserF sixth Parser to run inside the element
+     * @param bodyParserG seventh Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <A> Type of bodyParserA's result
+     * @param <B> Type of bodyParserB's result
+     * @param <C> Type of bodyParserC's result
+     * @param <D> Type of bodyParserD's result
+     * @param <E> Type of bodyParserE's result
+     * @param <F> Type of bodyParserF's result
+     * @param <G> Type of bodyParserG's result
+     */
+    public static <T,A,B,C,D,E,F,G> Parser<Tuple8<T,A,B,C,D,E,F,G>> within(
+            String name,
+            Parser<T> targetParser,
+            Parser<A> bodyParserA,
+            Parser<B> bodyParserB,
+            Parser<C> bodyParserC,
+            Parser<D> bodyParserD,
+            Parser<E> bodyParserE,
+            Parser<F> bodyParserF,
+            Parser<G> bodyParserG
+    ) {
+        return
+            seq(open(name, targetParser),
+                bodyParserA,
+                bodyParserB,
+                bodyParserC,
+                bodyParserD,
+                bodyParserE,
+                bodyParserF,
+                bodyParserG)
+            .nextL(close(name));
+    }
 
-    public static <X> Parser<List<X>> manyWithin(QName name, Parser<X> bodyParser) {
+    /**
+     * Constructs a parser, which repeatedly executes bodyParser inside the element until its end,
+     * and returns a list of bodyParser's results.
+     *
+     * @param name Element's name (qualified)
+     * @param bodyParser Parser to run inside the element
+     * @param <B> Type of bodyParser's result
+     */
+    public static <B> Parser<List<B>> manyWithin(QName name, Parser<B> bodyParser) {
         return open(name).nextR(bodyParser.until(tryClose(name)));
     }
 
-    public static <X> Parser<List<X>> manyWithin(String name, Parser<X> bodyParser) {
+    /**
+     * Constructs a parser, which repeatedly executes bodyParser inside the element until its end,
+     * and returns a list of bodyParser's results.
+     *
+     * @param name Element's name (unqualified)
+     * @param bodyParser Parser to run inside the element
+     * @param <B> Type of bodyParser's result
+     */
+    public static <B> Parser<List<B>> manyWithin(String name, Parser<B> bodyParser) {
         return open(name).nextR(bodyParser.until(tryClose(name)));
     }
 
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name once,
+     * then repeatedly executes bodyParser inside the element until its end,
+     * then returns a tuple, consisting of targetParser's result, and a list of bodyParser's results
+     *
+     * @param name Element's name (qualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParser Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <B> Type of bodyParser's result
+     */
     public static <T,B> Parser<Tuple2<T,List<B>>> manyWithin(
-        QName name, Parser<T> targetParser, Parser<B> bodyParser
+            QName name, Parser<T> targetParser, Parser<B> bodyParser
     ) {
         return seq(opens(name).nextR(targetParser).nextL(step), bodyParser.until(tryClose(name)));
     }
 
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name once,
+     * then repeatedly executes bodyParser inside the element until its end,
+     * then returns a tuple, consisting of targetParser's result, and a list of bodyParser's results
+     *
+     * @param name Element's name (unqualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParser Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     * @param <B> Type of bodyParser's result
+     */
     public static <T,B> Parser<Tuple2<T,List<B>>> manyWithin(
-        String name, Parser<T> targetParser, Parser<B> bodyParser
+            String name, Parser<T> targetParser, Parser<B> bodyParser
     ) {
         return seq(opens(name).nextR(targetParser).nextL(step), bodyParser.until(tryClose(name)));
     }
 
+    /**
+     * Constructs a parser, which repeatedly executes bodyParser inside the element until its end.
+     *
+     * @param name Element's name (qualified)
+     * @param bodyParser Parser to run inside the element
+     */
     public static Parser<?> evalManyWithin(QName name, Parser<?> bodyParser) {
         return open(name).nextL(bodyParser.until_(tryClose(name)));
     }
 
+    /**
+     * Constructs a parser, which repeatedly executes bodyParser inside the element until its end.
+     *
+     * @param name Element's name (unqualified)
+     * @param bodyParser Parser to run inside the element
+     */
     public static Parser<?> evalManyWithin(String name, Parser<?> bodyParser) {
         return open(name).nextL(bodyParser.until_(tryClose(name)));
     }
 
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name once,
+     * then repeatedly executes bodyParser inside the element until its end,
+     * then returns the targetParser's result.
+     *
+     * @param name Element's name (qualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParser Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     */
     public static <T> Parser<T> evalManyWithin(
-        QName name, Parser<T> targetParser, Parser<?> bodyParser
+            QName name, Parser<T> targetParser, Parser<?> bodyParser
     ) {
         return opens(name).nextR(targetParser).nextL(step).nextL(bodyParser.until_(tryClose(name)));
     }
 
+    /**
+     * Constructs a parser, which executes targetParser on the element with given name once,
+     * then repeatedly executes bodyParser inside the element until its end,
+     * then returns the targetParser's result.
+     *
+     * @param name Element's name (unqualified)
+     * @param targetParser Parser to run on the element
+     * @param bodyParser Parser to run inside the element
+     * @param <T> Type of targetParser's result
+     */
     public static <T> Parser<T> evalManyWithin(
-        String name, Parser<T> targetParser, Parser<?> bodyParser
+            String name, Parser<T> targetParser, Parser<?> bodyParser
     ) {
         return opens(name).nextR(targetParser).nextL(step).nextL(bodyParser.until_(tryClose(name)));
     }
