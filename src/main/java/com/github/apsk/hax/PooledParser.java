@@ -23,10 +23,10 @@ public final class PooledParser<R> implements Parser<R> {
         return this.pool;
     }
     @Override
-    public PooledParser<R> nextL(Parser<?> p) {
+    public PooledParser<R> nextL(Parser<?> otherParser) {
         return PooledParser.from((reader, pool) -> {
             R result = this.run(reader, pool);
-            p.run(reader);
+            otherParser.run(reader);
             return result;
         });
     }

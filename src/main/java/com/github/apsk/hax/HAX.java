@@ -256,8 +256,6 @@ public final class HAX {
         };
     }
 
-    //-------------------------------------------------------------------------------------------//
-
     public static <A,B> Parser<Tuple2<A,B>> rawSeq(Parser<A> bodyParserA, Parser<B> bodyParserB) {
         return (reader, pool) -> {
             if (pool == null) {
@@ -477,35 +475,119 @@ public final class HAX {
         ));
     }
 
-    //-------------------------------------------------------------------------------------------//
-
-    public static <X> Parser<X> open(QName name, Parser<X> p) {
-        return opens(name).nextR(p).nextL(step);
+    /**
+     * Constructs a parser, which ensures that current element is opening element,
+     * its name is elemName, then executes elemParser on it, puts the reader's cursor after it,
+     * and returns the result of elemParser's execution.
+     *
+     * <p>
+     *     Example for {@code '<x:items count="7">'}:
+     *     <pre>open(new QName("x", "items"), attr("count"))
+     *
+     * @param elemName Element's name (qualified)
+     * @param elemParser Parser to execute on element
+     * @param <T> Type of elemParser's result
+     */
+    public static <T> Parser<T> open(QName elemName, Parser<T> elemParser) {
+        return opens(elemName).nextR(elemParser).nextL(step);
     }
 
-    public static <X> Parser<X> open(String name, Parser<X> p) {
-        return opens(name).nextR(p).nextL(step);
+    /**
+     * Constructs a parser, which ensures that current element is opening element,
+     * its name is elemName, then executes elemParser on it, puts the reader's cursor after it,
+     * and returns the result of elemParser's execution.
+     *
+     * <p>
+     *     Example for {@code '<items count="7">'}:
+     *     <pre>open("items", attr("count"))
+     *
+     * @param elemName Element's name (qualified)
+     * @param elemParser Parser to execute on element
+     * @param <T> Type of elemParser's result
+     */
+    public static <T> Parser<T> open(String elemName, Parser<T> elemParser) {
+        return opens(elemName).nextR(elemParser).nextL(step);
     }
 
-    public static <X> Parser<X> elem(QName name, Parser<X> p) {
-        return opens(name).nextR(p).nextL(step).nextL(close(name));
+    /**
+     * Constructs a parser, which ensures that current element is opening element,
+     * its name is elemName, then executes elemParser on it, ensures next element is
+     * corresponding closing element, puts the reader's cursor after the closing element,
+     * and returns the result of elemParser's execution.
+     *
+     * <p>
+     *     Example for {@code '<ns:language name="Java" version="8"></ns:language>'}:
+     *     <pre>elem(new QName("ns", "language"), seq(attr("name"), attr("version")))
+     *
+     * @param elemName Element's name (qualified)
+     * @param elemParser Parser to execute on element
+     * @param <T> Type of elemParser's result
+     */
+    public static <T> Parser<T> elem(QName elemName, Parser<T> elemParser) {
+        return opens(elemName).nextR(elemParser).nextL(step).nextL(close(elemName));
     }
 
-    public static <X> Parser<X> elem(String name, Parser<X> p) {
-        return opens(name).nextR(p).nextL(step).nextL(close(name));
+    /**
+     * Constructs a parser which ensures that current element is opening element,
+     * its name is elemName, then executes elemParser on it, ensures next element is
+     * corresponding closing element, puts the reader's cursor after the closing element,
+     * and returns the result of elemParser's execution.
+     *
+     * <p>
+     *     Example for {@code '<language name="Java" version="8"></language>'}:
+     *     <pre>elem("language", seq(attr("name"), attr("version")))
+     *
+     * @param elemName Element's name (unqualified)
+     * @param elemParser Parser to execute on element
+     * @param <T> Type of elemParser's result
+     */
+    public static <T> Parser<T> elem(String elemName, Parser<T> elemParser) {
+        return opens(elemName).nextR(elemParser).nextL(step).nextL(close(elemName));
     }
 
+    /**
+     * Constructs a parser which ensures that current element is opening element,
+     * its name is elemName, then reads the value of the attribute attrName of this element,
+     * ensures next element is corresponding closing element,
+     * puts the reader's cursor after the closing element, and returns attribute's value read.
+     *
+     * <p>
+     *     Example for {@code '<ns:language p:name="Java"></ns:language>'}:
+     *     <pre>elemAttr(new QName("ns", "language"), new QName("p", "name"))
+     *
+     * @param elemName Element's name (qualified)
+     * @param attrName Attribute's name (qualified)
+     */
     public static Parser<String> elemAttr(QName elemName, QName attrName) {
         return opens(elemName).nextR(attr(attrName)).nextL(step).nextL(close(elemName));
     }
 
+    /**
+     * Constructs a parser which ensures that current element is opening element,
+     * its name is elemName, then reads the value of the attribute attrName of this element,
+     * ensures next element is corresponding closing element,
+     * puts the reader's cursor after the closing element, and returns attribute's value read.
+     *
+     * <p>
+     *     Example for {@code '<language name="Java"></language>'}:
+     *     <pre>elemAttr("language", "name")
+     *
+     * @param elemName Element's name (unqualified)
+     * @param attrName Attribute's name (unqualified)
+     */
     public static Parser<String> elemAttr(String elemName, String attrName) {
         return opens(elemName).nextR(attr(attrName)).nextL(step).nextL(close(elemName));
     }
 
     /**
-     * Constructs a parser, which, for an element with given elemName,
-     * reads and returns the text inside this element.
+     * Constructs a parser which ensures that current element is opening element,
+     * its name is elemName, then reads the text inside this element,
+     * ensures next element is corresponding closing element,
+     * puts the reader's cursor after the closing element, and returns text read.
+     *
+     * <p>
+     *     Example for {@code '<w:spell>abracadabra</w:spell>'}:
+     *     <pre>elemText(new QName("w", "spell"))
      *
      * @param name Element's name (qualified)
      */
@@ -514,8 +596,14 @@ public final class HAX {
     }
 
     /**
-     * Constructs a parser, which, for an element with given elemName,
-     * reads and returns the text inside this element.
+     * Constructs a parser which ensures that current element is opening element,
+     * its name is elemName, then reads the text inside this element,
+     * ensures next element is corresponding closing element,
+     * puts the reader's cursor after the closing element, and returns text read.
+     *
+     * <p>
+     *     Example for {@code '<spell>abracadabra</spell>'}:
+     *     <pre>elemText("spell")
      *
      * @param name Element's name (unqualified)
      */
@@ -524,8 +612,14 @@ public final class HAX {
     }
 
     /**
-     * Constructs a parser, which, for an element with given elemName,
-     * reads an attribute attrName and text inside the element, and returns them as a tuple.
+     * Constructs a parser which ensures that current element is opening element,
+     * its name is elemName, then reads the value of the attribute attrName of this element,
+     * then reads the text inside this element, ensures next element is corresponding closing element,
+     * puts the reader's cursor after the closing element, and returns attribute's value and text read.
+     *
+     * <p>
+     *     Example for {@code '<w:spell a:type="charm">ascendio</w:spell>'}:
+     *     <pre>elemAttrAndText(new QName("w", "spell"), new QName("a", "type"))
      *
      * @param elemName Element's name (qualified)
      * @param attrName Attribute's name (qualified)
@@ -535,8 +629,14 @@ public final class HAX {
     }
 
     /**
-     * Constructs a parser, which, for an element with given elemName,
-     * reads an attribute attrName and text inside the element, and returns them as a tuple.
+     * Constructs a parser which ensures that current element is opening element,
+     * its name is elemName, then reads the value of the attribute attrName of this element,
+     * then reads the text inside this element, ensures next element is corresponding closing element,
+     * puts the reader's cursor after the closing element, and returns attribute's value and text read.
+     *
+     * <p>
+     *     Example for {@code '<spell type="charm">ascendio</spell>'}:
+     *     <pre>elemAttrAndText("spell", "type")
      *
      * @param elemName Element's name (unqualified)
      * @param attrName Attribute's name (unqualified)
