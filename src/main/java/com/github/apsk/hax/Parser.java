@@ -10,8 +10,8 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface Parser<R> {
     /**
-     * Runs the parser with given reader and pool, and returns its result.
-     * <p>When pool is not null, parser could store result in it, but that's not a requirement.
+     * Runs the parser with the given reader and pool, and returns its result.
+     * <p>When the pool is not null, parser can store result in it, but that's not a requirement.
      *
      * @param reader Reader to get data from
      * @param pool Pool to store result in
@@ -21,7 +21,7 @@ public interface Parser<R> {
     R run(XMLStreamReader reader, R pool) throws XMLStreamException;
 
     /**
-     * Runs the parser with given reader, and returns its result.
+     * Runs the parser with the given reader, and returns its result.
      *
      * @param reader Reader to get data from
      * @return Result of parser execution
@@ -32,28 +32,41 @@ public interface Parser<R> {
     }
 
     /**
-     * Transforms the parser into a new parser with result mapped by f.
+     * Constructs a parser, which is equivalent to this,
+     * except its result is postprocessed with the function f.
      *
-     * @param f Mapper for the parser's result
-     * @param <X> Mapper's codomain type
+     * @param f Function to process parser's result
+     * @param <X> f's codomain type
      */
     default <X> Parser<X> map(Function<R,X> f) {
         return (reader, _pool) -> f.apply(this.run(reader));
     }
 
-    default Parser<?> effect(Consumer<R> f) {
+    /**
+     * Constructs a parser, which is equivalent to this, except its result
+     * is postprocessed with the given effectful computation and discarded.
+     *
+     * @param computation Effectful computation to run on result
+     */
+    default Parser<?> effect(Consumer<R> computation) {
         return (reader, _pool) -> {
-            f.accept(this.run(reader));
+            computation.accept(this.run(reader));
             return null;
         };
     }
 
-    default PooledParser<List<R>> until(Parser<Boolean> pred) {
+    /**
+     * Constructs a parser, which repeatedly executes this parser and collects results into a list,
+     * until the execution of predicateParser returns true.
+
+     * @param predicateParser Parser to check termination predicate
+     */
+    default SelfPooledParser<List<R>> until(Parser<Boolean> predicateParser) {
         Parser<List<R>> listParser = (reader, pool) -> {
             if (pool != null) {
                 int ix = 0;
                 int lastIndex = pool.size() - 1;
-                while (!pred.run(reader)) {
+                while (!predicateParser.run(reader)) {
                     if (ix <= lastIndex) {
                         pool.set(ix, this.run(reader, pool.get(ix)));
                     } else {
@@ -68,15 +81,20 @@ public interface Parser<R> {
                 return pool;
             } else {
                 List<R> xs = new ArrayList<>();
-                while (!pred.run(reader)) {
+                while (!predicateParser.run(reader)) {
                     xs.add(this.run(reader));
                 }
                 return xs;
             }
         };
-        return PooledParser.from(listParser);
+        return SelfPooledParser.from(listParser);
     }
 
+    /**
+     *
+     * @param pred
+     * @return
+     */
     default Parser<?> until_(Parser<Boolean> pred) {
         return (reader, _pool) -> {
             while (!pred.run(reader))
@@ -85,6 +103,11 @@ public interface Parser<R> {
         };
     }
 
+    /**
+     *
+     * @param otherParser
+     * @return
+     */
     default Parser<R> nextL(Parser<?> otherParser) {
         return (reader, pool) -> {
             R result = this.run(reader, pool);
@@ -93,6 +116,12 @@ public interface Parser<R> {
         };
     }
 
+    /**
+     *
+     * @param otherParser
+     * @param <X>
+     * @return
+     */
     default <X> Parser<X> nextR(Parser<X> otherParser) {
         return (reader, _pool) -> {
             this.run(reader);
@@ -100,9 +129,15 @@ public interface Parser<R> {
         };
     }
 
-    default <X> PooledParser<X> nextR(PooledParser<X> otherParser) {
+    /**
+     *
+     * @param otherParser
+     * @param <X>
+     * @return
+     */
+    default <X> SelfPooledParser<X> nextR(SelfPooledParser<X> otherParser) {
         Parser<X> pureParser = otherParser.parser;
-        return PooledParser.from((reader, pool) -> {
+        return SelfPooledParser.from((reader, pool) -> {
             this.run(reader);
             return pureParser.run(reader, pool);
         });
@@ -110,6 +145,7 @@ public interface Parser<R> {
 
     /**
      * Removes self-pooling from the parser, if any.
+     *
      * @return Pure parser
      */
     default Parser<R> purify() {

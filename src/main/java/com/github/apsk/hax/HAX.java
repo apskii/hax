@@ -6,6 +6,9 @@ import javax.xml.namespace.QName;
 import java.util.List;
 
 public final class HAX {
+    /**
+     * Constructs a parser, which skips all spaces.
+     */
     public static Parser<?> skipSpaces = (reader, _pool) -> {
         while (reader.isCharacters() && reader.isWhiteSpace()) {
             reader.next();
@@ -13,153 +16,207 @@ public final class HAX {
         return null;
     };
 
+    /**
+     * Constructs a parser, which moves reader one position forward and then skips all spaces.
+     */
     public static Parser<?> step = (reader, _pool) -> {
         reader.next();
         skipSpaces.run(reader);
         return null;
     };
 
-    public static Parser<?> skipTo(QName name) {
+    /**
+     * Constructs a parser, which skips everything until reaches an opening element elemName.
+     *
+     * @param elemName Element's name (qualified)
+     */
+    public static Parser<?> skipTo(QName elemName) {
         return (reader, _pool) -> {
             for (;;) {
                 if (reader.isStartElement()) {
                     QName eventElemName = reader.getName();
-                    if (eventElemName.equals(name))
+                    if (eventElemName.equals(elemName))
                         return null;
                 }
                 if (!reader.hasNext()) {
                     throw new ParserException(
-                        "`skipTo(" + name + ")` reached the end of stream.");
+                        "`skipTo(" + elemName + ")` reached the end of stream.");
                 }
                 reader.next();
             }
         };
     }
 
-    public static Parser<?> skipTo(String name) {
+    /**
+     * Constructs a parser, which skips everything until reaches an opening element elemName.
+     *
+     * @param elemName Element's name (unqualified)
+     */
+    public static Parser<?> skipTo(String elemName) {
         return (reader, _pool) -> {
             for (;;) {
                 if (reader.isStartElement()) {
-                    if (reader.getLocalName().equals(name))
+                    if (reader.getLocalName().equals(elemName))
                         return null;
                 }
                 if (!reader.hasNext()) {
                     throw new ParserException(
-                        "`skipTo(" + name + ")` reached the end of stream.");
+                        "`skipTo(" + elemName + ")` reached the end of stream.");
                 }
                 reader.next();
             }
         };
     }
 
-    public static Parser<?> open(QName name) {
+    /**
+     * Constructs a parser, which ensures that the current element is opening element,
+     * its name is elemName, and then puts the reader's cursor after it.
+     *
+     * @param elemName Element's name (qualified)
+     */
+    public static Parser<?> open(QName elemName) {
         return (reader, _pool) -> {
             if (reader.isStartElement()) {
                 QName eventElemName = reader.getName();
-                if (eventElemName.equals(name)) {
+                if (eventElemName.equals(elemName)) {
                     reader.next();
                     skipSpaces.run(reader);
                     return null;
                 } else {
                     throw new ParserException(
-                        "`open(" + name + ")` called on wrong opening element.");
+                        "`open(" + elemName + ")` called on wrong opening element.");
                 }
             } else {
                 throw new ParserException(
-                    "`open(" + name + ")` called on non-opening element.");
+                    "`open(" + elemName + ")` called on non-opening element.");
             }
         };
     }
 
-    public static Parser<?> open(String name) {
+    /**
+     * Constructs a parser, which ensures that the current element is opening element,
+     * its name is elemName, and then puts the reader's cursor after it.
+     *
+     * @param elemName Element's name (unqualified)
+     */
+    public static Parser<?> open(String elemName) {
         return (reader, _pool) -> {
             if (reader.isStartElement()) {
-                if (reader.getLocalName().equals(name)) {
+                if (reader.getLocalName().equals(elemName)) {
                     reader.next();
                     skipSpaces.run(reader);
                     return null;
                 } else {
                     throw new ParserException(
-                        "`open(" + name + ")` called on wrong opening element.");
+                        "`open(" + elemName + ")` called on wrong opening element.");
                 }
             } else {
                 throw new ParserException(
-                    "`open(" + name + ")` called on non-opening element.");
+                    "`open(" + elemName + ")` called on non-opening element.");
             }
         };
     }
 
-    public static Parser<?> opens(QName name) {
+    /**
+     * Constructs a parser, which ensures that the current element is opening element and its name is elemName.
+     *
+     * @param elemName Element's name (qualified)
+     */
+    public static Parser<?> opens(QName elemName) {
         return (reader, _pool) -> {
             if (reader.isStartElement()) {
-                if (reader.getName().equals(name))
+                if (reader.getName().equals(elemName))
                     return null;
                 else {
                     throw new ParserException(
-                        "`opens(" + name + ")` called on wrong opening element.");
+                        "`opens(" + elemName + ")` called on wrong opening element.");
                 }
             } else {
                 throw new ParserException(
-                    "`opens(" + name + ")` called on non-opening element.");
+                    "`opens(" + elemName + ")` called on non-opening element.");
             }
         };
     }
 
-    public static Parser<?> opens(String name) {
+    /**
+     * Constructs a parser, which ensures that the current element is opening element and its name is elemName.
+     *
+     * @param elemName Element's name (unqualified)
+     */
+    public static Parser<?> opens(String elemName) {
         return (reader, _pool) -> {
             if (reader.isStartElement()) {
-                if (reader.getLocalName().equals(name))
+                if (reader.getLocalName().equals(elemName))
                     return null;
                 else {
                     throw new ParserException(
-                        "`opens(" + name + ")` called on wrong opening element.");
+                        "`opens(" + elemName + ")` called on wrong opening element.");
                 }
             } else {
                 throw new ParserException(
-                    "`opens(" + name + ")` called on non-opening element.");
+                    "`opens(" + elemName + ")` called on non-opening element.");
             }
         };
     }
 
-    public static Parser<?> close(QName name) {
+    /**
+     * Constructs a parser, which ensures that the current element is closing element,
+     * its name is elemName, and then puts the reader's cursor after it.
+     *
+     * @param elemName Element's name (qualified)
+     */
+    public static Parser<?> close(QName elemName) {
         return (reader, _pool) -> {
             if (reader.isEndElement()) {
-                if (reader.getName().equals(name)) {
+                if (reader.getName().equals(elemName)) {
                     reader.next();
                     return null;
                 } else {
                     throw new ParserException(
-                        "`close(" + name + ")` called on wrong closing element.");
+                        "`close(" + elemName + ")` called on wrong closing element.");
                 }
             } else {
                 throw new ParserException(
-                    "`close(" + name + ")` called on non-closing element.");
+                    "`close(" + elemName + ")` called on non-closing element.");
             }
         };
     }
 
-    public static Parser<?> close(String name) {
+    /**
+     * Constructs a parser, which ensures that the current element is closing element,
+     * its name is elemName, and then puts the reader's cursor after it.
+     *
+     * @param elemName Element's name (unqualified)
+     */
+    public static Parser<?> close(String elemName) {
         return (reader, _pool) -> {
             if (reader.isEndElement()) {
-                if (reader.getLocalName().equals(name)) {
+                if (reader.getLocalName().equals(elemName)) {
                     reader.next();
                     return null;
                 } else {
                     throw new ParserException(
-                        "`close(" + name + ")` called on wrong closing element.");
+                        "`close(" + elemName + ")` called on wrong closing element.");
                 }
             } else {
                 throw new ParserException(
-                    "`close(" + name + ")` called on non-closing element.");
+                    "`close(" + elemName + ")` called on non-closing element.");
             }
         };
     }
 
-    public static Parser<Boolean> tryClose(QName name) {
+    /**
+     * Constructs a parser, which checks, whether the current element is closing element
+     * and its name is elemName, and then returns false if it's not, otherwise
+     * puts the reader's cursor after it and returns true.
+     *
+     * @param elemName Element's name (qualified)
+     */
+    public static Parser<Boolean> tryClose(QName elemName) {
         return (reader, _pool) -> {
             for (;;) {
                 if (reader.isEndElement()) {
-                    if (reader.getName().equals(name)) {
+                    if (reader.getName().equals(elemName)) {
                         reader.next();
                         skipSpaces.run(reader);
                         return true;
@@ -169,18 +226,25 @@ public final class HAX {
                 }
                 if (!reader.hasNext()) {
                     throw new ParserException(
-                        "`tryClose(" + name + ")` called at the end of stream.");
+                        "`tryClose(" + elemName + ")` called at the end of stream.");
                 }
                 reader.next();
             }
         };
     }
 
-    public static Parser<Boolean> tryClose(String name) {
+    /**
+     * Constructs a parser, which checks, whether the current element is closing element
+     * and its name is elemName, and then returns false if it's not, otherwise
+     * puts the reader's cursor after it and returns true.
+     *
+     * @param elemName Element's name (unqualified)
+     */
+    public static Parser<Boolean> tryClose(String elemName) {
         return (reader, _pool) -> {
             for (;;) {
                 if (reader.isEndElement()) {
-                    if (reader.getLocalName().equals(name)) {
+                    if (reader.getLocalName().equals(elemName)) {
                         reader.next();
                         skipSpaces.run(reader);
                         return true;
@@ -190,33 +254,49 @@ public final class HAX {
                 }
                 if (!reader.hasNext()) {
                     throw new ParserException(
-                            "`tryClose(" + name + ")` called at the end of stream.");
+                            "`tryClose(" + elemName + ")` called at the end of stream.");
                 }
                 reader.next();
             }
         };
     }
 
-    public static Parser<Boolean> closing(QName name) {
+    /**
+     * Constructs a parser, which returns a boolean value indicating
+     * whether the current element is ending element and its name is elemName.
+     *
+     * @param elemName Element's name (qualified)
+     */
+    public static Parser<Boolean> closing(QName elemName) {
         return (reader, _pool) -> {
             if (reader.isEndElement()) {
-                if (reader.getName().equals(name))
+                if (reader.getName().equals(elemName))
                     return true;
             }
             return false;
         };
     }
 
-    public static Parser<Boolean> closing(String name) {
+    /**
+     * Constructs a parser, which returns a boolean value indicating
+     * whether the current element is ending element and its name is elemName.
+     *
+     * @param elemName Element's name (unqualified)
+     */
+    public static Parser<Boolean> closing(String elemName) {
         return (reader, _pool) -> {
             if (reader.isEndElement()) {
-                if (reader.getLocalName().equals(name))
+                if (reader.getLocalName().equals(elemName))
                     return true;
             }
             return false;
         };
     }
 
+    /**
+     * Constructs a parser, which reads and returns the text
+     * at the current position and puts the reader's cursor after its end.
+     */
     public static Parser<String> text = (reader, _pool) -> {
         if (!reader.isCharacters()) {
             if (reader.isEndElement())
@@ -236,6 +316,12 @@ public final class HAX {
         return stringBuilder.toString();
     };
 
+    /**
+     * Constructs a parser, which reads and returns the value
+     * of the attribute attrName of the current element.
+     *
+     * @param name Attribute's name (qualified)
+     */
     public static Parser<String> attr(QName name) {
         return (reader, _pool) -> {
             if (!reader.isStartElement()) {
@@ -246,6 +332,12 @@ public final class HAX {
         };
     }
 
+    /**
+     * Constructs a parser, which reads and returns the value
+     * of the attribute attrName of the current element.
+     *
+     * @param name Attribute's name (unqualified)
+     */
     public static Parser<String> attr(String name) {
         return (reader, _pool) -> {
             if (!reader.isStartElement()) {
@@ -256,6 +348,15 @@ public final class HAX {
         };
     }
 
+    /**
+     * Constructs a parser, which executes bodyParserA and bodyParserB
+     * one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     */
     public static <A,B> Parser<Tuple2<A,B>> rawSeq(Parser<A> bodyParserA, Parser<B> bodyParserB) {
         return (reader, pool) -> {
             if (pool == null) {
@@ -270,6 +371,17 @@ public final class HAX {
         };
     }
 
+    /**
+     * Constructs a parser, which executes bodyParserA, bodyParserB, and bodyParserC
+     * one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     */
     public static <A,B,C> Parser<Tuple3<A,B,C>> rawSeq(Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC) {
         return (reader, pool) -> {
             if (pool == null) {
@@ -286,6 +398,19 @@ public final class HAX {
         };
     }
 
+    /**
+     * Constructs a parser, which executes bodyParserA, bodyParserB,
+     * bodyParserC, and bodyParserD one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param bodyParserD Fourth parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     * @param <D> Fourth parser's result type
+     */
     public static <A,B,C,D> Parser<Tuple4<A,B,C,D>> rawSeq(
         Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD
     ) {
@@ -306,6 +431,21 @@ public final class HAX {
         };
     }
 
+    /**
+     * Constructs a parser, which executes bodyParserA, bodyParserB,
+     * bodyParserC, bodyParserD, and bodyParserE one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param bodyParserD Fourth parser to execute
+     * @param bodyParserE Fifth parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     * @param <D> Fourth parser's result type
+     * @param <E> Fifth parser's result type
+     */
     public static <A,B,C,D,E> Parser<Tuple5<A,B,C,D,E>> rawSeq(
         Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
         Parser<E> bodyParserE
@@ -329,6 +469,24 @@ public final class HAX {
         };
     }
 
+    /**
+     * Constructs a parser, which executes bodyParserA, bodyParserB,
+     * bodyParserC, bodyParserD, bodyParserE, and bodyParserF
+     * one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param bodyParserD Fourth parser to execute
+     * @param bodyParserE Fifth parser to execute
+     * @param bodyParserF Sixth parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     * @param <D> Fourth parser's result type
+     * @param <E> Fifth parser's result type
+     * @param <F> Sixth parser's result type
+     */
     public static <A,B,C,D,E,F> Parser<Tuple6<A,B,C,D,E,F>> rawSeq(
         Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
         Parser<E> bodyParserE, Parser<F> bodyParserF
@@ -354,6 +512,26 @@ public final class HAX {
         };
     }
 
+    /**
+     * Constructs a parser, which executes bodyParserA, bodyParserB,
+     * bodyParserC, bodyParserD, bodyParserE, bodyParserF, and bodyParserG
+     * one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param bodyParserD Fourth parser to execute
+     * @param bodyParserE Fifth parser to execute
+     * @param bodyParserF Sixth parser to execute
+     * @param bodyParserG Seventh parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     * @param <D> Fourth parser's result type
+     * @param <E> Fifth parser's result type
+     * @param <F> Sixth parser's result type
+     * @param <G> Seventh parser's result type
+     */
     public static <A,B,C,D,E,F,G> Parser<Tuple7<A,B,C,D,E,F,G>> rawSeq(
         Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
         Parser<E> bodyParserE, Parser<F> bodyParserF, Parser<G> bodyParserG
@@ -381,6 +559,28 @@ public final class HAX {
         };
     }
 
+    /**
+     * Constructs a parser, which executes bodyParserA, bodyParserB,
+     * bodyParserC, bodyParserD, bodyParserE, bodyParserF, bodyParserG, and bodyParserH
+     * one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param bodyParserD Fourth parser to execute
+     * @param bodyParserE Fifth parser to execute
+     * @param bodyParserF Sixth parser to execute
+     * @param bodyParserG Seventh parser to execute
+     * @param bodyParserH Eighth parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     * @param <D> Fourth parser's result type
+     * @param <E> Fifth parser's result type
+     * @param <F> Sixth parser's result type
+     * @param <G> Seventh parser's result type
+     * @param <H> Eighth parser's result type
+     */
     public static <A,B,C,D,E,F,G,H> Parser<Tuple8<A,B,C,D,E,F,G,H>> rawSeq(
             Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC,
             Parser<D> bodyParserD, Parser<E> bodyParserE, Parser<F> bodyParserF,
@@ -411,67 +611,175 @@ public final class HAX {
         };
     }
 
-    public static <A,B> PooledParser<Tuple2<A,B>> seq(
+    /**
+     * Constructs a self-pooled parser, which executes bodyParserA and bodyParserB
+     * one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     */
+    public static <A,B> SelfPooledParser<Tuple2<A,B>> seq(
             Parser<A> bodyParserA, Parser<B> bodyParserB
     ) {
-        return PooledParser.from(rawSeq(
-            bodyParserA.purify(), bodyParserB.purify()
+        return SelfPooledParser.from(rawSeq(
+                bodyParserA.purify(), bodyParserB.purify()
         ));
     }
 
-    public static <A,B,C> PooledParser<Tuple3<A,B,C>> seq(
+    /**
+     * Constructs a self-pooled parser, which executes bodyParserA, bodyParserB, and bodyParserC
+     * one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     */
+    public static <A,B,C> SelfPooledParser<Tuple3<A,B,C>> seq(
             Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC
     ) {
-        return PooledParser.from(rawSeq(
-            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify()
+        return SelfPooledParser.from(rawSeq(
+                bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify()
         ));
     }
 
-    public static <A,B,C,D> PooledParser<Tuple4<A,B,C,D>> seq(
+    /**
+     * Constructs a self-pooled parser, which executes bodyParserA, bodyParserB,
+     * bodyParserC, and bodyParserD one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param bodyParserD Fourth parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     * @param <D> Fourth parser's result type
+     */
+    public static <A,B,C,D> SelfPooledParser<Tuple4<A,B,C,D>> seq(
             Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD
     ) {
-        return PooledParser.from(rawSeq(
-            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(), bodyParserD.purify()
+        return SelfPooledParser.from(rawSeq(
+                bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(), bodyParserD.purify()
         ));
     }
 
-    public static <A,B,C,D,E> PooledParser<Tuple5<A,B,C,D,E>> seq(
+    /**
+     * Constructs a self-pooled parser, which executes bodyParserA, bodyParserB,
+     * bodyParserC, bodyParserD, and bodyParserE one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param bodyParserD Fourth parser to execute
+     * @param bodyParserE Fifth parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     * @param <D> Fourth parser's result type
+     * @param <E> Fifth parser's result type
+     */
+    public static <A,B,C,D,E> SelfPooledParser<Tuple5<A,B,C,D,E>> seq(
             Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
             Parser<E> bodyParserE
     ) {
-        return PooledParser.from(rawSeq(
-            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(),
-            bodyParserD.purify(), bodyParserE.purify()
+        return SelfPooledParser.from(rawSeq(
+                bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(),
+                bodyParserD.purify(), bodyParserE.purify()
         ));
     }
 
-    public static <A,B,C,D,E,F> PooledParser<Tuple6<A,B,C,D,E,F>> seq(
+    /**
+     * Constructs a self-pooled parser, which executes bodyParserA, bodyParserB,
+     * bodyParserC, bodyParserD, bodyParserE, and bodyParserF
+     * one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param bodyParserD Fourth parser to execute
+     * @param bodyParserE Fifth parser to execute
+     * @param bodyParserF Sixth parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     * @param <D> Fourth parser's result type
+     * @param <E> Fifth parser's result type
+     * @param <F> Sixth parser's result type
+     */
+    public static <A,B,C,D,E,F> SelfPooledParser<Tuple6<A,B,C,D,E,F>> seq(
             Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
             Parser<E> bodyParserE, Parser<F> bodyParserF
     ) {
-        return PooledParser.from(rawSeq(
-            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(),
-            bodyParserD.purify(), bodyParserE.purify(), bodyParserF.purify()
+        return SelfPooledParser.from(rawSeq(
+                bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(),
+                bodyParserD.purify(), bodyParserE.purify(), bodyParserF.purify()
         ));
     }
 
-    public static <A,B,C,D,E,F,G> PooledParser<Tuple7<A,B,C,D,E,F,G>> seq(
+    /**
+     * Constructs a self-pooled parser, which executes bodyParserA, bodyParserB,
+     * bodyParserC, bodyParserD, bodyParserE, bodyParserF, and bodyParserG
+     * one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param bodyParserD Fourth parser to execute
+     * @param bodyParserE Fifth parser to execute
+     * @param bodyParserF Sixth parser to execute
+     * @param bodyParserG Seventh parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     * @param <D> Fourth parser's result type
+     * @param <E> Fifth parser's result type
+     * @param <F> Sixth parser's result type
+     * @param <G> Seventh parser's result type
+     */
+    public static <A,B,C,D,E,F,G> SelfPooledParser<Tuple7<A,B,C,D,E,F,G>> seq(
         Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
         Parser<E> bodyParserE, Parser<F> bodyParserF, Parser<G> bodyParserG
     ) {
-        return PooledParser.from(rawSeq(
-            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(), bodyParserD.purify(),
-            bodyParserE.purify(), bodyParserF.purify(), bodyParserG.purify()
+        return SelfPooledParser.from(rawSeq(
+                bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(), bodyParserD.purify(),
+                bodyParserE.purify(), bodyParserF.purify(), bodyParserG.purify()
         ));
     }
 
-    public static <A,B,C,D,E,F,G,H> PooledParser<Tuple8<A,B,C,D,E,F,G,H>> seq(
+    /**
+     * Constructs a self-pooled parser, which executes bodyParserA, bodyParserB,
+     * bodyParserC, bodyParserD, bodyParserE, bodyParserF, bodyParserG, and bodyParserH
+     * one after another, and then returns their results.
+     *
+     * @param bodyParserA First parser to execute
+     * @param bodyParserB Second parser to execute
+     * @param bodyParserC Third parser to execute
+     * @param bodyParserD Fourth parser to execute
+     * @param bodyParserE Fifth parser to execute
+     * @param bodyParserF Sixth parser to execute
+     * @param bodyParserG Seventh parser to execute
+     * @param bodyParserH Eighth parser to execute
+     * @param <A> First parser's result type
+     * @param <B> Second parser's result type
+     * @param <C> Third parser's result type
+     * @param <D> Fourth parser's result type
+     * @param <E> Fifth parser's result type
+     * @param <F> Sixth parser's result type
+     * @param <G> Seventh parser's result type
+     * @param <H> Eighth parser's result type
+     */
+    public static <A,B,C,D,E,F,G,H> SelfPooledParser<Tuple8<A,B,C,D,E,F,G,H>> seq(
         Parser<A> bodyParserA, Parser<B> bodyParserB, Parser<C> bodyParserC, Parser<D> bodyParserD,
         Parser<E> bodyParserE, Parser<F> bodyParserF, Parser<G> bodyParserG, Parser<H> bodyParserH
     ) {
-        return PooledParser.from(rawSeq(
-            bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(), bodyParserD.purify(),
-            bodyParserE.purify(), bodyParserF.purify(), bodyParserG.purify(), bodyParserH.purify()
+        return SelfPooledParser.from(rawSeq(
+                bodyParserA.purify(), bodyParserB.purify(), bodyParserC.purify(), bodyParserD.purify(),
+                bodyParserE.purify(), bodyParserF.purify(), bodyParserG.purify(), bodyParserH.purify()
         ));
     }
 
@@ -672,7 +980,7 @@ public final class HAX {
     /**
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParser inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (qualified)
      * @param targetParser Parser to run on the element
@@ -694,7 +1002,7 @@ public final class HAX {
     /**
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA and bodyParserB one after another inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (qualified)
      * @param targetParser Parser to run on the element
@@ -720,7 +1028,7 @@ public final class HAX {
     /**
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA, bodyParserB, and bodyParserC one after another inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (qualified)
      * @param targetParser Parser to run on the element
@@ -751,7 +1059,7 @@ public final class HAX {
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA, bodyParserB, bodyParserC,
      * and bodyParserD one after another inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (qualified)
      * @param targetParser Parser to run on the element
@@ -786,7 +1094,7 @@ public final class HAX {
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD,
      * and bodyParserE one after another inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (qualified)
      * @param targetParser Parser to run on the element
@@ -825,7 +1133,7 @@ public final class HAX {
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD, bodyParserE,
      * and bodyParserF one after another inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (qualified)
      * @param targetParser Parser to run on the element
@@ -867,7 +1175,7 @@ public final class HAX {
     /**
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD, bodyParserE, bodyParserF,
-     * and bodyParserG one after another inside the element, and then returns corresponding results as a tuple.
+     * and bodyParserG one after another inside the element, and then returns their results.
      *
      * @param name Element's name (qualified)
      * @param targetParser Parser to run on the element
@@ -913,7 +1221,7 @@ public final class HAX {
     /**
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParser inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (unqualified)
      * @param targetParser Parser to run on the element
@@ -935,7 +1243,7 @@ public final class HAX {
     /**
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA and bodyParserB one after another inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (unqualified)
      * @param targetParser Parser to run on the element
@@ -961,7 +1269,7 @@ public final class HAX {
     /**
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA, bodyParserB, and bodyParserC one after another inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (unqualified)
      * @param targetParser Parser to run on the element
@@ -992,7 +1300,7 @@ public final class HAX {
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA, bodyParserB, bodyParserC,
      * and bodyParserD one after another inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (unqualified)
      * @param targetParser Parser to run on the element
@@ -1027,7 +1335,7 @@ public final class HAX {
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD,
      * and bodyParserE one after another inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (unqualified)
      * @param targetParser Parser to run on the element
@@ -1066,7 +1374,7 @@ public final class HAX {
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD, bodyParserE,
      * and bodyParserF one after another inside the element,
-     * and then returns corresponding results as a tuple.
+     * and then returns their results.
      *
      * @param name Element's name (unqualified)
      * @param targetParser Parser to run on the element
@@ -1108,7 +1416,7 @@ public final class HAX {
     /**
      * Constructs a parser, which executes targetParser on the element with given name,
      * then executes bodyParserA, bodyParserB, bodyParserC, bodyParserD, bodyParserE, bodyParserF,
-     * and bodyParserG one after another inside the element, and then returns corresponding results as a tuple.
+     * and bodyParserG one after another inside the element, and then returns their results.
      *
      * @param name Element's name (unqualified)
      * @param targetParser Parser to run on the element

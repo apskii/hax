@@ -4,10 +4,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.List;
 
-public final class PooledParser<R> implements Parser<R> {
+public final class SelfPooledParser<R> implements Parser<R> {
     final Parser<R> parser;
     R pool;
-    private PooledParser(Parser<R> parser) {
+    private SelfPooledParser(Parser<R> parser) {
         this.parser = parser;
     }
     @Override
@@ -23,22 +23,22 @@ public final class PooledParser<R> implements Parser<R> {
         return this.pool;
     }
     @Override
-    public PooledParser<R> nextL(Parser<?> otherParser) {
-        return PooledParser.from((reader, pool) -> {
+    public SelfPooledParser<R> nextL(Parser<?> otherParser) {
+        return SelfPooledParser.from((reader, pool) -> {
             R result = this.run(reader, pool);
             otherParser.run(reader);
             return result;
         });
     }
     @Override
-    public PooledParser<List<R>> until(Parser<Boolean> pred) {
-        return parser.until(pred);
+    public SelfPooledParser<List<R>> until(Parser<Boolean> predicateParser) {
+        return parser.until(predicateParser);
     }
     @Override
     public Parser<R> purify() {
         return parser;
     }
-    public static <T> PooledParser<T> from(Parser<T> parser) {
-        return new PooledParser(parser.purify());
+    public static <T> SelfPooledParser<T> from(Parser<T> parser) {
+        return new SelfPooledParser(parser.purify());
     }
 }
