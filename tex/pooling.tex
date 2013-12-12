@@ -1,14 +1,6 @@
 \documentclass{article}
 \usepackage{tikz}
-\usepackage{ifthen}
 \usetikzlibrary{calc}
-
-\makeatletter
-\newcommand{\gettikzy}[2]{
-  \tikz@scan@one@point\pgfutil@firstofone#1\relax
-  \edef#2{\the\pgf@y}
-}
-\makeatother
 
 \newcommand{\blockinput}[2]{
   \draw #1 -- #2;
