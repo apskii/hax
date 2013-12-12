@@ -1,0 +1,60 @@
+\documentclass{article}
+\usepackage{tikz}
+\usepackage{ifthen}
+\usetikzlibrary{calc}
+
+\makeatletter
+\newcommand{\gettikzy}[2]{
+  \tikz@scan@one@point\pgfutil@firstofone#1\relax
+  \edef#2{\the\pgf@y}
+}
+\makeatother
+
+\newcommand{\blockinput}[2]{
+  \draw #1 -- #2;
+  \draw[fill] #2 circle [radius=2pt];
+}
+
+\newcommand{\blockoutput}[2]{
+  \draw #1 -- #2;
+  \draw let
+    \p1 = #1,
+    \p2 = #2
+  in
+    \ifdim\y1=\y2
+      ($ #1 + (0,.2) $) -- ($ #1 - (0,.2) $)
+    \else
+      ($ #1 + (.2,0) $) -- ($ #1 - (.2,0) $)
+    \fi ;
+}
+
+\newcommand{\parser}[1]{
+  \draw #1 rectangle ($ #1 + (5,-4) $);
+  \blockinput{($ #1 + (-1,-1) $)}{($ #1 + (.5,-1) $)};
+  \blockinput{($ #1 + (-1,-3) $)}{($ #1 + (.5,-3) $)};
+  \blockoutput{($ #1 + (4.5,-2) $)}{($ #1 + (6,-2) $)};
+}
+
+\begin{document}
+\begin{tikzpicture}[scale=0.5]
+% lhs
+\parser{(3,7)};
+% |-->
+\draw [|->] (10,5) -- (14,5);
+% rhs
+\parser{(20,7)};
+\blockinput{(15,6)}{(20.5,6)};
+% ref selector
+\draw (17,3) rectangle (19,5);
+\blockinput{(15,4)}{(17.5,4)};
+\blockinput{(18,2)}{(18,3.5)};
+\blockoutput{(18.5,4)}{(20.5,4)};
+% ref duplicator
+\draw (26,4) rectangle (28,6);
+\blockinput{(25,5)}{(26.6,5)};
+\blockoutput{(27.5,5)}{(30,5)};
+% outer
+\draw (16,1) rectangle (29,9);
+
+\end{tikzpicture}
+\end{document}
