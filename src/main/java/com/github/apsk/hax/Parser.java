@@ -56,8 +56,8 @@ public interface Parser<R> {
     }
 
     /**
-     * Constructs a parser, which repeatedly executes this parser and collects results into a list,
-     * until the execution of predicateParser returns true.
+     * Constructs a parser, which repeatedly executes this parser and collects
+     * results into a list, until the execution of predicateParser returns true.
 
      * @param predicateParser Parser to check termination predicate
      */
@@ -91,13 +91,14 @@ public interface Parser<R> {
     }
 
     /**
-     *
-     * @param pred
-     * @return
+     * Constructs a parser, which repeatedly executes this parser discarding results,
+     * until the execution of predicateParser returns true.
+
+     * @param predicateParser Parser to check termination predicate
      */
-    default Parser<?> until_(Parser<Boolean> pred) {
+    default Parser<?> until_(Parser<Boolean> predicateParser) {
         return (reader, _pool) -> {
-            while (!pred.run(reader))
+            while (!predicateParser.run(reader))
                 this.run(reader);
             return null;
         };
