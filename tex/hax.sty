@@ -1,0 +1,35 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hax}
+% \RequirePackage{tikz}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+\ProcessOptions\relax
+
+\newcommand{\blockinput}[2]{
+  \draw #1 -- #2;
+  \draw[fill] #2 circle [radius=2pt];
+}
+
+\newcommand{\blockoutput}[2]{
+  \draw #1 -- #2;
+  \draw let
+    \p1 = #1,
+    \p2 = #2
+  in
+    \ifdim\y1=\y2
+      ($ #1 + (0,.2) $) -- ($ #1 - (0,.2) $)
+    \else
+      ($ #1 + (.2,0) $) -- ($ #1 - (.2,0) $)
+    \fi;
+}
+
+\newcommand{\parser}[1]{
+  \draw [ultra thick] #1 rectangle ($ #1 + (5,-4) $);
+  \node [below left] at ($ #1 + (5,0) $) {Parser};
+  \blockinput{($ #1 + (-1,-1) $)}{($ #1 + (.5,-1) $)};
+  \blockinput{($ #1 + (-1,-3) $)}{($ #1 + (.5,-3) $)};
+  \blockoutput{($ #1 + (4.5,-2) $)}{($ #1 + (6,-2) $)};
+}
+
+\endinput
